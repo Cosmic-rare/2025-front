@@ -110,6 +110,7 @@ const Index = () => {
                   <TableCell align="center">学年</TableCell>
                   <TableCell align="center">対戦クラス</TableCell>
                   <TableCell align="center">開始時刻</TableCell>
+                  <TableCell align="center">場所</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -136,6 +137,10 @@ const Index = () => {
                           new Date(m.data[`p_${m.game}`].scheduledAt).toLocaleString('en-us', { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit", hour12: false })
                           : "-"
                       }
+                    </TableCell>
+                    <TableCell align="center">
+                      {/* @ts-ignore */}
+                      {m.data[`p_${m.game}`].place ? places[m.data[`p_${m.game}`].place] : "-"}
                     </TableCell>
                   </TableRow>
                 ))}

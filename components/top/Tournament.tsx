@@ -1,5 +1,6 @@
 import { TournamentCellData } from "@/pages/tournament"
 import InfoIcon from "@mui/icons-material/Info"
+import PlaceIcon from "@mui/icons-material/Place"
 
 const Tournament: React.FC<{ cells: Record<string, TournamentCellData>, openModal: Function, data: any }> = ({ cells, openModal, data }) => {
   const colors = ["#adb5bd", "#dc3545"]
@@ -44,6 +45,42 @@ const Tournament: React.FC<{ cells: Record<string, TournamentCellData>, openModa
                   >
                     <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                       <InfoIcon width={20} height={20} style={{ color: "#777" }} />
+                    </div>
+                  </div>
+                ) : null}
+
+                {/* 始まっただけ(endしてない) */}
+                {cellData.edit !== undefined && (data[`p_${cellData.edit!}`].startedAt && !data[`p_${cellData.edit!}`].endedAt) && !data[`p_${cellData.edit!}`].applied
+                ? (
+                  <div
+                    onClick={() => openModal(cellData.edit!)}
+                    style={{
+                      marginTop: 10,
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                      <PlaceIcon width={20} height={20} style={{ color: "#e91e63" }} />
+                    </div>
+                  </div>
+                ) : null}
+
+                {/* 始まってない */}
+                {cellData.edit !== undefined && !(data[`p_${cellData.edit!}`].startedAt && !data[`p_${cellData.edit!}`].endedAt) && !data[`p_${cellData.edit!}`].applied
+                ? (
+                  <div
+                    onClick={() => openModal(cellData.edit!)}
+                    style={{
+                      marginTop: 10,
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                      <PlaceIcon width={20} height={20} style={{ color: "#777" }} />
                     </div>
                   </div>
                 ) : null}
