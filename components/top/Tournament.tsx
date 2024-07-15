@@ -62,7 +62,7 @@ const Tournament: React.FC<{ cells: Record<string, TournamentCellData>, openModa
                     }}
                   >
                     <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-                      <PlaceIcon width={20} height={20} style={{ color: "#e91e63" }} />
+                      <InfoIcon width={20} height={20} style={{ color: "#e91e63" }} />
                     </div>
                   </div>
                 ) : null}
@@ -80,7 +80,7 @@ const Tournament: React.FC<{ cells: Record<string, TournamentCellData>, openModa
                     }}
                   >
                     <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-                      <PlaceIcon width={20} height={20} style={{ color: "#777" }} />
+                      <InfoIcon width={20} height={20} style={{ color: "#777" }} />
                     </div>
                   </div>
                 ) : null}

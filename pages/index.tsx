@@ -59,6 +59,22 @@ const Index = () => {
           sx={{ width: width }}
           style={{ backgroundColor: "#eae9eb", borderRadius: 9, padding: 24 }}
         >
+          <ul style={{ paddingLeft: 20 }}>
+            <li>
+              生徒会では機械,プログラミング,オーディオ機材を弄れる79期生を募集しています
+            </li>
+            <li>
+            アプリやデータの<a href="https://docs.google.com/forms/d/e/1FAIpQLSe8LzNwL_zPftBPcKGbGB_F70-q4U-B4k1sbI0RZqFvwhCpSw/viewform?usp=sf_link">不具合を報告</a>
+            </li>
+          </ul>
+        </Card>
+      </div>
+
+      <div style={{ display: "flex", justifyContent: "center", marginTop: 24 }}>
+        <Card
+          sx={{ width: width }}
+          style={{ backgroundColor: "#eae9eb", borderRadius: 9, padding: 24 }}
+        >
           <h3>開催中の競技</h3>
           <TableContainer component={Paper}>
             <Table sx={{ minWidth: 0 }} aria-label="simple table">
