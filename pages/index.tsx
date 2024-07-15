@@ -50,7 +50,8 @@ const Index = () => {
           sx={{ width: width }}
           style={{ backgroundColor: "#eae9eb", borderRadius: 9, padding: 24 }}
         >
-          <h3>開催まで{Math.ceil((new Date(2024, 6, 16).valueOf() - Date.now()) / 1000 / 60 / 60 / 24)}日</h3>
+          {/* <h3>開催まで{Math.ceil((new Date(2024, 6, 16).valueOf() - Date.now()) / 1000 / 60 / 60 / 24)}日</h3> */}
+          <h3>晴雨日程Bで開催 1日目</h3>
         </Card>
       </div>
 

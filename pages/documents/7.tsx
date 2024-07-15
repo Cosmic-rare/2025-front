@@ -28,7 +28,7 @@ const Documents = () => {
         <h2>要項</h2>
 
         <div style={{ height: "100%" }}>
-          <iframe src="https://drive.google.com/file/d/1CVDbysqVmznTZqew_APNSp9prQAMfyyk/preview" width="100%" style={{ height: `${innerSize.height - 160}px` }} allow="autoplay"></iframe>
+          <iframe src="https://drive.google.com/file/d/112bkuRukZd6haFROvDp-If67C1QtppoZ/preview" width="100%" style={{ height: `${innerSize.height - 160}px` }} allow="autoplay"></iframe>
         </div>
 
       </div>
