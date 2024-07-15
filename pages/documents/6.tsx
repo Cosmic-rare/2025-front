@@ -1,11 +1,28 @@
 import { Card } from "@mui/material"
 import Head from "next/head"
+import { useState, useEffect } from "react"
+
+const resize = () => {
+  const height = window.innerHeight
+  const width = window.innerWidth
+  return { height: height, width: width }
+}
 
 const width = {
   xs: 0.9, sm: 350, md: 450, lg: 450, xl: 450,
 }
 
 const Documents = () => {
+  const [innerSize, setInnerSize] = useState({ height: 0, width: 0 })
+  const handleResize = () => {
+    setInnerSize(resize())
+  }
+  useEffect(() => {
+    handleResize()
+    window.addEventListener("resize", handleResize)
+    window.addEventListener("orientationchange", handleResize)
+  }, [])
+
   return (
     <div>
       <Head>
@@ -16,48 +33,8 @@ const Documents = () => {
         <h2>ルール：マリオカート 8DX</h2>
       </div>
 
-      <div style={{ display: "flex", justifyContent: "center", marginTop: 24 }}>
-        <Card
-          sx={{ width: width }}
-          style={{ backgroundColor: "#eae9eb", borderRadius: 9, padding: 24, lineHeight: 2.1 }}
-        >
-
-          <h3>環境</h3>
-          <p>1台のswitchに2人分のコントローラーを接続、合計4台に8人接続し試合を行う。ローカル通信で4台をつなげる。</p>
-
-          <h3>持参物</h3>
-          <ul style={{ paddingLeft: 20 }}>
-            <li>
-              コントローラー
-              <p>
-                注意:ジョイコンは片側のみの使用(ローカル通信は両持ち対応不可のため)。
-                また、その他のコントローラー(プロコン等)はスイッチのドックに繋げて接続できるもののみ可(無線のみ対応可)。 なお、接続するケーブルは各自持参すること。 コントローラーは原則各自持参。(用意できない場合は生徒会にご相談ください)
-              </p>
-            </li>
-            <li>
-              有線イヤホン
-              <p>
-                モニターから音が出ないため、必要な人は持ってきた方が良い。有線イヤホンのみ対応可。
-              </p>
-            </li>
-          </ul>
-
-          <h2>ルール</h2>
-          <h3>基本ルール</h3>
-          <p>4対4のチーム戦。150cc。ノーマルアイテム。4レース行いゲーム内の配点で勝敗を決める。同点の場合は最高得点者がいるクラスの勝ち。ハンドルアシスト,オートアクセル,ジャイロ操作の有無は自由。(途中変更あり)</p>
-
-          <h3>コース</h3>
-          <p>クラスの代表者がジャンケンをし、勝った方のクラスは1、3コース目、負けた方のクラスは2、4コース目のコースを選ぶ。なおダウンロードコンテンツ (DLC)とおまかせは選択不可。</p>
-
-          <h3>キャラ・マシン</h3>
-          <p>使用キャラ・使用マシンは自由。(ゴールドパーツの使用は不可、途中変更なし)</p>
-
-          <h2>お願い</h2>
-          <p>試合間にコントローラーの接続、キャラ、マシンの決定をしますので試合開始の5分前には会場に集まってください。</p>
-          <p>プラスチック板を挟んで、クラスごとの座席は自由です。クラス番号の若い順に赤、青チームとなります。各テーブルで左側(赤チーム)が1Pとなるようにします。</p>
-          <p>席に着いたら、運営の指示に従ってコントローラーの登録をしてください。上記の内容について、マリオカート8デラックスに詳しい友人に説明してもらうと、より内容を理解できると思います。</p>
-
-        </Card>
+      <div style={{ height: "100%" }}>
+      <iframe src="https://drive.google.com/file/d/17EKIX3Mmg7_rO6E7ELh07NtGXTffixCA/preview" width="100%" style={{ height: `${innerSize.height - 160}px` }} allow="autoplay"></iframe>
       </div>
     </div>
   )
