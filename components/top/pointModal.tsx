@@ -10,6 +10,7 @@ interface Props {
 }
 
 const Point = ({ l, h, t }: any) => {
+  if (l >= 0 && h >= 0) {
   return (
     <Grid container spacing={2} style={{ justifyContent: "center", textAlign: "center", fontSize: "1.1em" }}>
       <Grid item xs={2}>
@@ -26,6 +27,24 @@ const Point = ({ l, h, t }: any) => {
       </Grid>
     </Grid>
   )
+}else {
+  return (
+    <Grid container spacing={2} style={{ justifyContent: "center", textAlign: "center", fontSize: "1.1em" }}>
+    <Grid item xs={2}>
+      <div>{t}</div>
+    </Grid>
+    <Grid item xs={4}>
+      <div></div>
+    </Grid>
+    <Grid item xs={2}>
+      <div>-</div>
+    </Grid>
+    <Grid item xs={4}>
+      <div></div>
+    </Grid>
+  </Grid>
+  )
+}
 }
 
 const PointModal: React.FC<Props> = ({ isModalOpen, setIsModalOpen, data, event }) => {
