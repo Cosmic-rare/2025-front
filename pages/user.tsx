@@ -11,37 +11,6 @@ const width = {
   xs: 0.9, sm: 350, md: 450, lg: 450, xl: 450,
 }
 
-const GenToken = ({ token, updateToken }: any) => {
-  try {
-    return (
-      <>
-        {// @ts-ignore
-          jwtDecode(token).roleType === "ADMIN" ?
-            <Card
-              sx={{ width: width }}
-              style={{ backgroundColor: "#eae9eb", borderRadius: 9, padding: 24 }}
-            >
-              <button onClick={async () => {
-                const r = await APIpost(
-                  "auth/genToken",
-                  { token: token },
-                  () => { },
-                  () => { },
-                  () => updateToken("")
-                )
-              }}>regenerate role-token</button>
-            </Card>
-            :
-            null
-        }
-      </>
-    )
-  } catch (e) {
-    console.log(e)
-    return null
-  }
-}
-
 const App = () => {
   const [password, setPassword] = useState("")
   const token = useTokenStore((s) => s.token)
@@ -58,9 +27,6 @@ const App = () => {
       </Head>
 
       {contextHolder}
-      <div style={{ display: "flex", justifyContent: "center", marginTop: 24 }}>
-        <GenToken token={token} updateToken={updateToken} />
-      </div>
 
       <div style={{ display: "flex", justifyContent: "center", marginTop: 24 }}>
         <Card

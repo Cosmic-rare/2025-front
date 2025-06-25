@@ -68,12 +68,12 @@ const App = () => {
     return (
       <div>
         <Head>
-          <title>試合結果一覧</title>
+          <title>試合編集</title>
         </Head>
 
         {contextHolder}
         <div style={{ display: "flex", justifyContent: "center" }}>
-          <h2>試合結果一覧</h2>
+          <h2>試合編集</h2>
         </div>
 
         <div style={{ display: "flex", justifyContent: "center", marginTop: 24 }}>
@@ -85,7 +85,13 @@ const App = () => {
             {data.data1.map((group: any, index: any) => (
               <div key={index} style={{ display: "flex", justifyContent: "center", paddingTop: 4, paddingBottom: 4 }}>
                 {group.map((val: any, i: any) => {
-                  return <ViewMain data={val} key={i} />
+                  return <Main
+                    data={val}
+                    key={i}
+                    eAPI={e}
+                    // @ts-ignore
+                    token={token}
+                  />
                 })}
               </div>
             ))}
@@ -101,7 +107,13 @@ const App = () => {
             {data.data2.map((group: any, index: any) => (
               <div key={index} style={{ display: "flex", justifyContent: "center", paddingTop: 4, paddingBottom: 4 }}>
                 {group.map((val: any, i: any) => {
-                  return <ViewMain data={val} key={i} />
+                  return <Main
+                    data={val}
+                    key={i}
+                    eAPI={e}
+                    // @ts-ignore
+                    token={token}
+                  />
                 })}
               </div>
             ))}
@@ -117,7 +129,13 @@ const App = () => {
             {data.data3.map((group: any, index: any) => (
               <div key={index} style={{ display: "flex", justifyContent: "center", paddingTop: 4, paddingBottom: 4 }}>
                 {group.map((val: any, i: any) => {
-                  return <ViewMain data={val} key={i} />
+                  return <Main
+                    data={val}
+                    key={i}
+                    eAPI={e}
+                    // @ts-ignore
+                    token={token}
+                  />
                 })}
               </div>
             ))}

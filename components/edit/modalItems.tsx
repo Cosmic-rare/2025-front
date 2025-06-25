@@ -269,42 +269,6 @@ export const ModalContent = ({ setGame, game, event }: any) => {
           <PlaceInput game={game} setGame={setGame} />
           : null
       }
-
-      <Row justify="center">
-        <Col flex={3}>
-          <div style={{ textAlign: "left" }}>
-            <span style={{ marginTop: "25px", display: "inline-block" }}>適用済</span>
-          </div>
-        </Col>
-        <Col flex={9}>
-          <span style={{ marginBottom: "10px", display: "inline-block" }}></span>
-          <div style={{ textAlign: "center", justifyContent: "center", alignItems: "center", display: "flex" }}>
-            <Radio.Group onChange={(e: RadioChangeEvent) => setGame((p: gameType) => { return { ...p, applied: e.target.value } })} value={game.applied}>
-              <Radio.Button value={false}>未</Radio.Button>
-              <Radio.Button value={true}>済</Radio.Button>
-            </Radio.Group>
-          </div>
-        </Col>
-      </Row>
-
-      <Row justify="center">
-        <Col flex={3}>
-          <div style={{ textAlign: "left" }}>
-            <span style={{ marginTop: "25px", display: "inline-block" }}>記録者</span>
-          </div>
-        </Col>
-        <Col flex={9}>
-          <span style={{ marginBottom: "10px", display: "inline-block" }}></span>
-          <div style={{ textAlign: "center", justifyContent: "center", alignItems: "center", display: "flex" }}>
-            <Input
-              style={{ marginRight: 8 }}
-              value={game.recorderId}
-              onChange={(e: any) => setGame((p: gameType) => { return { ...p, recorderId: e.target.value } })}
-            />
-            <Button onClick={() => setGame((p: gameType) => { return { ...p, recorderId: null } })}>{"Clear"}</Button>
-          </div>
-        </Col>
-      </Row>
     </>
   )
 }
