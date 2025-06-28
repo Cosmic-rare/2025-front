@@ -60,7 +60,7 @@ const PointInput = ({ setGame, game, pos }: any) => {
 
 const DateInput = ({ setGame, game, column, title }: any) => {
   const onChangeTime: TimePickerProps['onChange'] = (date) => {
-    const da = new Date(game[column] as number ?? new Date(1721055600000))
+    const da = new Date(game[column] as number ?? new Date(1752537600000))
     const t = new Date(da.getFullYear(), da.getMonth(), da.getDate(), date?.hour(), date?.minute()).valueOf()
     setGame((p: gameType) => {
       return { ...p, [column]: t }
@@ -70,7 +70,7 @@ const DateInput = ({ setGame, game, column, title }: any) => {
   const onChangeDate = (e: RadioChangeEvent) => {
     setGame((p: gameType) => {
       // @ts-ignore
-      const da = new Date(p[column] as number ?? new Date(1721055600000))
+      const da = new Date(p[column] as number ?? new Date(1752537600000))
       da.setDate(e.target.value)
       return { ...p, [column]: da.valueOf() }
     })
@@ -90,7 +90,7 @@ const DateInput = ({ setGame, game, column, title }: any) => {
             onChange={onChangeTime}
             format="h:mm"
             value={dayjs(new Date(game[column] ? game[column] : 0))}
-            defaultValue={dayjs(new Date(game[column] ?? new Date(1721055600000)).toISOString())}
+            defaultValue={dayjs(new Date(game[column] ?? new Date(1752537600000)).toISOString())}
           />
         </div>
       </Col>
@@ -98,8 +98,8 @@ const DateInput = ({ setGame, game, column, title }: any) => {
         <span style={{ marginBottom: "10px", display: "inline-block" }}></span>
         <div style={{ textAlign: "center", justifyContent: "center", alignItems: "center", display: "flex" }}>
           <Radio.Group onChange={onChangeDate} value={new Date(game[column]).getDate()} defaultValue={16}>
+            <Radio.Button value={15}>15</Radio.Button>
             <Radio.Button value={16}>16</Radio.Button>
-            <Radio.Button value={17}>17</Radio.Button>
             <Button onClick={() => setGame((p: gameType) => { return { ...p, [column]: null } })}>{"-"}</Button>
           </Radio.Group>
         </div>
@@ -200,8 +200,7 @@ export const ModalContent = ({ setGame, game, event }: any) => {
       }
 
       <DateInput setGame={setGame} game={game} column="scheduledAt" title="予定" />
-      <DateInput setGame={setGame} game={game} column="startedAt" title="開始" />
-      <DateInput setGame={setGame} game={game} column="endedAt" title="終了" />
+      <DateInput setGame={setGame} game={game} column="recordedAt" title="記録" />
 
       {/* esport, soccer用の入力 */}
 

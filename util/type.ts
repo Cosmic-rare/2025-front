@@ -14,9 +14,9 @@ export interface gameType {
   fHitted: any
   eSport?: string
   soccer?: string
-  startedAt?: number
-  endedAt?: number
+  recordedAt?: number
   recorderId?: string
   applied: boolean
   scheduledAt?: number
+  placeId: string
 }
