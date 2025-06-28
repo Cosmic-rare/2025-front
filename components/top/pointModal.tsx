@@ -58,9 +58,9 @@ const PointModal: React.FC<Props> = ({ isModalOpen, setIsModalOpen, data, event 
       footer={[]}
     >
       <div style={{ position: "relative" }}>
-        {!(data?.endedAt) && !(data?.applied) ?
+        {!(data?.recordedAt) ?
           <>
-            <h4>{data?.startedAt ? "開催中" : "予定"}</h4>
+            <h4>{data?.scheduledAt < Date.now() ? "開催中" : "予定"}</h4>
             <p>
               開始時刻: {
               data?.scheduledAt ?

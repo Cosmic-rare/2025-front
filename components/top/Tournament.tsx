@@ -33,7 +33,7 @@ const Tournament: React.FC<{ cells: Record<string, TournamentCellData>, openModa
               {["esport", "soccer"].includes(data.event) ? <span style={{ color: colors[1] }}>{cellData.point >= 0 ? cellData.point : ""}</span> : null}
 
               {/* 始まってて終わっててapply済でそのまま点書いてない種目 */}
-              {cellData.edit !== undefined && (data[`p_${cellData.edit!}`].startedAt && data[`p_${cellData.edit!}`].endedAt) && data[`p_${cellData.edit!}`].applied && !["esport", "soccer"].includes(data.event)
+              {cellData.edit !== undefined && (data[`p_${cellData.edit!}`].recordedAt) && !["esport", "soccer"].includes(data.event)
                 ? (
                   <div
                     onClick={() => openModal(cellData.edit!)}
@@ -50,8 +50,8 @@ const Tournament: React.FC<{ cells: Record<string, TournamentCellData>, openModa
                   </div>
                 ) : null}
 
-              {/* 始まっただけ(endしてない) */}
-              {cellData.edit !== undefined && (data[`p_${cellData.edit!}`].startedAt && !data[`p_${cellData.edit!}`].endedAt) && !data[`p_${cellData.edit!}`].applied
+              {/* 開催中の試合に赤びっくりアイコン出すやつ */}
+              {cellData.edit !== undefined && (data[`p_${cellData.edit!}`].scheduledAt < Date.now() && !data[`p_${cellData.edit!}`].recordedAt)
                 ? (
                   <div
                     onClick={() => openModal(cellData.edit!)}
@@ -68,8 +68,8 @@ const Tournament: React.FC<{ cells: Record<string, TournamentCellData>, openModa
                   </div>
                 ) : null}
 
-              {/* 始まってない */}
-              {cellData.edit !== undefined && !(data[`p_${cellData.edit!}`].startedAt && !data[`p_${cellData.edit!}`].endedAt) && !data[`p_${cellData.edit!}`].applied
+              {/* 始まってないときに予定モーダルを開くやつ */}
+              {cellData.edit !== undefined && data[`p_${cellData.edit!}`].scheduledAt > Date.now()
                 ? (
                   <div
                     onClick={() => openModal(cellData.edit!)}
