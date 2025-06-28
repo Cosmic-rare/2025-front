@@ -1,3 +1,3 @@
 # 週末にでもやること
 
-- 学年周り〜だるいーやばい
+- indexとtournamentだけISRにしてる、scheduleは毎回API叩いてる
