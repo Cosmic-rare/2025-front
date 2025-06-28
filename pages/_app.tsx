@@ -17,7 +17,7 @@ import HomeIcon from "@mui/icons-material/Home"
 import dynamic from "next/dynamic"
 import DescriptionIcon from "@mui/icons-material/Description"
 import { blueGrey } from "@mui/material/colors"
-import { AccountCircle, LibraryAdd } from "@mui/icons-material"
+import { AccountCircle } from "@mui/icons-material"
 import { useTokenStore } from "@/util/store"
 import { jwtDecode } from "jwt-decode"
 
