@@ -1,9 +1,10 @@
 import "@/styles/home.css"
 import type { AppProps } from "next/app"
+import type { NextPage } from 'next'
 import Script from "next/script"
 import * as gtag from "../lib/gtag"
 import { useRouter } from "next/router"
-import { useEffect, useState } from "react"
+import { useEffect, useState, ReactElement, ReactNode } from "react"
 import {
   BottomNavigation,
   BottomNavigationAction,
@@ -19,6 +20,14 @@ import { blueGrey } from "@mui/material/colors"
 import { AccountCircle, LibraryAdd } from "@mui/icons-material"
 import { useTokenStore } from "@/util/store"
 import { jwtDecode } from "jwt-decode"
+
+type NextPageWithLayout = NextPage & {
+  getLayout?: (page: ReactElement) => ReactNode
+}
+
+type AppPropsWithLayout = AppProps & {
+  Component: NextPageWithLayout
+}
 
 const resize = () => {
   const height = window.innerHeight
@@ -80,8 +89,11 @@ const AnScript = () => {
   )
 }
 
-function App({ Component, pageProps }: AppProps) {
+type Props = {
+  children: ReactNode
+}
 
+function DefaultLayout({ children }: Props) {
   const BottomNav = () => {
     const router = useRouter()
   
@@ -102,10 +114,6 @@ function App({ Component, pageProps }: AppProps) {
         </BottomNavigation>
       </Paper>
     )
-  }
-
-  if (!localStorage.getItem("id")) {
-    localStorage.setItem("id", crypto.randomUUID())
   }
 
   const router = useRouter()
@@ -145,7 +153,7 @@ function App({ Component, pageProps }: AppProps) {
         <AnScript />
         <div>
           <div style={{ padding: 10, paddingBottom: 78 }}>
-            <Component {...pageProps} />
+            {children}
           </div>
           <BottomNav />
         </div>
@@ -180,12 +188,21 @@ function App({ Component, pageProps }: AppProps) {
 
           </div>
           <div style={{ height: "100%", width: "100%", overflowX: "scroll", padding: 10 }}>
-            <Component {...pageProps} />
+            {children}
           </div>
         </div>
       </>
     )
   }
+}
+
+function App({ Component, pageProps }: AppProps) {
+  // @ts-ignore
+  const getLayout = Component.getLayout ?? ((page) => (
+    <div suppressHydrationWarning><DefaultLayout>{page}</DefaultLayout></div>
+  ))
+
+  return getLayout(<Component {...pageProps} />)
 }
 
 export default dynamic(() => Promise.resolve(App), {

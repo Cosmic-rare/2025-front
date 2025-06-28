@@ -1,6 +1,6 @@
 import { APIget, APIpost } from "@/util/api"
 import { useRouter } from "next/router"
-import { useEffect, useState } from "react"
+import { ReactNode, useEffect, useState } from "react"
 import { useTokenStore } from "@/util/store"
 import { notification } from "antd"
 import { ModalContent } from "@/components/record/inputs"
@@ -115,3 +115,7 @@ const Post = () => {
 }
 
 export default Post
+
+Post.getLayout = function getLayout(page: ReactNode) {
+  return page
+}
