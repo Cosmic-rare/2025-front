@@ -3,7 +3,6 @@ import { Card } from "@mui/material"
 import _ from "lodash"
 import { notification } from "antd"
 import { APIget } from "@/util/api"
-import ViewMain from "@/components/top/Main"
 import Main from "@/components/edit/Main"
 import { useTokenStore } from "@/util/store"
 import Head from "next/head"
@@ -29,7 +28,6 @@ const width = {
 const App = () => {
   const [data, setData] = useState<any>()
   const token = useTokenStore((s) => s.token)
-  const updateToken = useTokenStore((s) => s.setToken)
   useEffect(() => {
     const fetchData = async () => {
       const res = await APIget("/get/2", () => { }, () => { })

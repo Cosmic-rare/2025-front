@@ -205,6 +205,8 @@ function App({ Component, pageProps }: AppProps) {
   return getLayout(<Component {...pageProps} />)
 }
 
-export default dynamic(() => Promise.resolve(App), {
-  ssr: false
-})
+// export default dynamic(() => Promise.resolve(App), {
+//   ssr: false
+// })
+
+export default App

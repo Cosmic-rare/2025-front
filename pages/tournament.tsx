@@ -1,11 +1,8 @@
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
 import { Card } from "@mui/material"
 import _ from "lodash"
-import { notification } from "antd"
 import { APIget } from "@/util/api"
 import ViewMain from "@/components/top/Main"
-import Main from "@/components/edit/Main"
-import { useTokenStore } from "@/util/store"
 import Head from "next/head"
 
 export interface TournamentCellData {
@@ -26,13 +23,8 @@ const width = {
   xs: 0.9, sm: 350, md: 450, lg: 450, xl: 450,
 }
 
-const App = () => {
-  const [data, setData] = useState<any>()
-  const token = useTokenStore((s) => s.token)
-  const updateToken = useTokenStore((s) => s.setToken)
-  useEffect(() => {
-    const fetchData = async () => {
-      const res = await APIget("/get/2", () => { }, () => { })
+export async function getStaticProps() {
+  const res = await APIget("/get/2", () => { }, () => { })
       // @ts-ignore
       const groupedData1 = res.data1.reduce((groups, item) => {
         const { order } = item
@@ -54,15 +46,17 @@ const App = () => {
         groups[order].push(item)
         return groups
       }, [])
-      setData({ data1: groupedData1, data2: groupedData2, data3: groupedData3 })
-    }
-    fetchData()
-  }, [])
 
-  const [api, contextHolder] = notification.useNotification()
-  const e = (message: string, description = "だめですごめんなさい") => {
-    api.error({ message: message, description: description, duration: 6, placement: "bottomRight", className: "custom-notification" })
-  }
+  return {
+    props: {
+      data1: groupedData1, data2: groupedData2, data3: groupedData3
+    },
+    revalidate: 10
+  };
+}
+
+const App = ({data1, data2, data3}: any) => {
+  const [data, setData] = useState<any>({ data1: data1, data2: data2, data3: data3 })
 
   if (data) {
     return (
@@ -71,7 +65,6 @@ const App = () => {
           <title>試合結果一覧</title>
         </Head>
 
-        {contextHolder}
         <div style={{ display: "flex", justifyContent: "center" }}>
           <h2>試合結果一覧</h2>
         </div>

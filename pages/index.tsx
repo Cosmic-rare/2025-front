@@ -16,24 +16,23 @@ const width = {
   xs: 0.9, sm: 350, md: 450, lg: 450, xl: 450,
 }
 
-const Index = () => {
-  const [match1, setMatch1] = useState([])
-  const [match2, setMatch2] = useState([])
-  useEffect(() => {
-    const fetchData = async () => {
-      const res = await APIget(`match/now`, () => { }, () => { })
-      setMatch1(res)
-    }
-    fetchData()
-  }, [])
-  useEffect(() => {
-    const fetchData = async () => {
-      let res = await APIget(`match/soon`, () => { }, () => { })
-      res.sort((a: any, b: any) => a.data[`p_${a.game}`].scheduledAt - b.data[`p_${b.game}`].scheduledAt)
-      setMatch2(res)
-    }
-    fetchData()
-  }, [])
+export async function getStaticProps() {
+  const res1 = await APIget(`match/now`, () => { }, () => { })
+
+  let res2 = await APIget(`match/soon`, () => { }, () => { })
+  res2.sort((a: any, b: any) => a.data[`p_${a.game}`].scheduledAt - b.data[`p_${b.game}`].scheduledAt)
+
+  return {
+    props: {
+      res1: res1, res2: res2
+    },
+    revalidate: 10
+  };
+}
+
+const Index = ({ res1, res2 }: any) => {
+  const [match1, setMatch1] = useState(res1)
+  const [match2, setMatch2] = useState(res2)
 
   return (
     <div>

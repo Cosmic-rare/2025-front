@@ -106,12 +106,12 @@ const Schedule = () => {
                 {rows.map((row: any) => (
                   <>
                     {
-                      (!displayConfirmed || row.certaintyMatch == displayConfirmed) && (displayApplied || !row.data[`p_${row.game}`].applied) ?
+                      (!displayConfirmed || row.certaintyMatch == displayConfirmed) && (displayApplied || !row.data[`p_${row.game}`].recordedAt)?
                         <TableRow
                           key={row.data.title}
                         >
                           <TableCell align="center">
-                            <Checkbox disabled={false} checked={row.data[`p_${row.game}`].applied} />
+                            <Checkbox disabled={false} checked={row.data[`p_${row.game}`].recordedAt} />
                           </TableCell>
                           <TableCell component="th" scope="row">
                             {row.data.title}
