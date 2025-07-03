@@ -19,12 +19,13 @@ function hasInvalidResults(match: any, p: any): boolean {
     u: number | '',
     l: number | '',
     fHitted?: '' | 'l' | 'h'
-  ): 'l' | 'h' | 'draw' | 'incomplete' => {
+  ): 'l' | 'h' | 'draw' | 'incomplete' | null => {
     if (!isNumber(u) || !isNumber(l)) return 'incomplete';
     if (u > l) return 'l';
     if (l > u) return 'h';
     if (fHitted === 'l') return 'l';
     if (fHitted === 'h') return 'h';
+    if (u == null && l == null) return null;
     return 'draw';
   };
 
@@ -49,7 +50,7 @@ function hasInvalidResults(match: any, p: any): boolean {
 
       if (match.event === 'dodgeball') {
         for (let i = 0; i < 3; i++) {
-          if (match[`p_${p}`][`l_p${i+1}`] == match[`p_${p}`][`h_p${i+1}`] && match[`p_${p}`].fHitted[`p${i+1}`] == null) {
+          if (match[`p_${p}`][`l_p${i + 1}`] !== null && match[`p_${p}`][`l_p${i + 1}`] == match[`p_${p}`][`h_p${i + 1}`] && match[`p_${p}`].fHitted[`p${i + 1}`] == null) {
             return true
           }
         }
@@ -235,6 +236,7 @@ const Post = () => {
         <p>注意文</p>
         <button
           onClick={() => setPhase(1)}
+          disabled={match[`p_${p}`].recordedAt}
         >
           つぎ
         </button>
@@ -268,10 +270,14 @@ const Post = () => {
       <div>
         <p>確認画面、トーナメント表がこうなるよーってやつとか時間あったらいれたい</p>
         <div style={{ width: `${30 * 15 + 10}px`, height: `${320 + 10}px`, overflowY: "hidden", position: "relative" }}>
-          <Tournament
-            cells={draw(match, template, match.event, true)}
-            data={match}
-          />
+          {hasInvalidResults(match, p) ?
+            <></>
+            : <Tournament
+              cells={draw(match, template, match.event, true)}
+              data={match}
+            />
+          }
+
         </div>
         {/* @ts-ignore */}
         {/* どっちがかったのかクライアント処理のやつ追加 */}
