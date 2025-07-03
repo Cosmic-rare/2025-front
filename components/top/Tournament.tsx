@@ -69,7 +69,7 @@ const Tournament: React.FC<{ cells: Record<string, TournamentCellData>, openModa
                 ) : null}
 
               {/* 始まってないときに予定モーダルを開くやつ */}
-              {cellData.edit !== undefined && data[`p_${cellData.edit!}`].scheduledAt > Date.now()
+              {cellData.edit !== undefined && data[`p_${cellData.edit!}`].scheduledAt > Date.now() && !(data[`p_${cellData.edit!}`].recordedAt)
                 ? (
                   <div
                     onClick={() => openModal(cellData.edit!)}

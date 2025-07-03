@@ -14,9 +14,10 @@ export const APIget = async (path: string, e: Function, f: Function) => {
   f()
 }
 
-export const APIpost = async (path: string, body: any, e: Function, f: Function, updateToken = () => { }) => {
+export const APIpost = async (path: string, body: any, e: Function, f: Function, updateToken = () => { }, s?: Function) => {
   try {
     const res = await axios.post(new URL(path, BASEURL).href, body)
+    if (s) s()
     f()
     return res.data
   } catch (err: any) {

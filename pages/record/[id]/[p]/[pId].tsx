@@ -1,125 +1,90 @@
 import { APIget, APIpost } from "@/util/api"
 import { useRouter } from "next/router"
 import { ReactNode, useEffect, useState } from "react"
-import { useTokenStore } from "@/util/store"
 import { notification } from "antd"
-import { ModalContent } from "@/components/record/inputs"
-import { CircularProgress, Backdrop, Button } from "@mui/material"
+import { CircularProgress, Backdrop } from "@mui/material"
 import getClass from "@/util/cl"
-import Head from "next/head"
 import draw from "@/util/draw"
 import data1 from "../../../data1.json"
 import _ from "lodash"
-import { Modal } from "antd"
-
-// const Post = () => {
-//   const router = useRouter()
-//   const { id, p } = router.query
-//   const [d, sD] = useState<null | any>(null)
-//   const [isLoading, setIsLoading] = useState(false)
-//   const token = useTokenStore((s) => s.token)
-//   const updateToken = useTokenStore((s) => s.setToken)
-//   const [api, contextHolder] = notification.useNotification()
-
-//   const eAPI = (message: string, description = "だめですごめんなさい") => {
-//     api.error({ message: message, description: description, duration: 6, placement: "bottomRight", className: "custom-notification" })
-//   }
-
-//   useEffect(() => {
-//     const fetchData = async () => {
-//       if (!(id && p)) { return }
-//       const r = await APIget(
-//         `/match/${id}`,
-//         () => { },
-//         () => { }
-//       )
-//       sD(r)
-//     }
-//     fetchData()
-//   }, [id, p])
-
-//   const handleStartEnd = async () => {
-//     if (d[`p_${p}`].startedAt == null && d[`p_${p}`].endedAt == null) {
-//       await APIpost(
-//         `/match/${id}/${p}/start`,
-//         { token: token, recorderId: localStorage.getItem("id") },
-//         () => { eAPI("Faild to start game") },
-//         async () => {
-//           const r = await APIget(
-//             `/match/${id}`,
-//             () => { eAPI("Faild to fetch game") },
-//             () => { }
-//           )
-//           sD(r)
-//         },
-//         () => updateToken("")
-//       )
-//     }
-//     if (d[`p_${p}`].startedAt != null && d[`p_${p}`].endedAt == null) {
-//       setIsLoading(true)
-//       await APIpost(
-//         `/match/${id}/${p}/end`,
-//         { token: token, recorderId: localStorage.getItem("id"), game: d[`p_${p}`] },
-//         () => { eAPI("Faild to stop game") },
-//         async () => {
-//           const r = await APIget(
-//             `/match/${id}`,
-//             () => { eAPI("Faild to fetch game") },
-//             () => { setIsLoading(false) }
-//           )
-//           sD(r)
-//         },
-//         () => updateToken("")
-//       )
-//     }
-//   }
-
-//   const Header = () => {
-//     return (
-//       <Head>
-//         {/* @ts-ignore */}
-//         <title>記録ページ: {d.title}, {getClass(d, d.event)[p - 1][0] ?? "未定"} - {getClass(d, d.event)[p - 1][1] ?? "未定"}</title>
-//       </Head>
-//     )
-//   }
-
-//   if (d) {
-//     return (
-//       <div>
-//         <Header />
-//         <div style={{ position: "relative", maxWidth: 330, margin: "auto" }}>
-//           <Backdrop
-//             sx={{ color: "#fff", zIndex: 9999 }}
-//             open={isLoading}
-//           >
-//             <CircularProgress color="inherit" />
-//           </Backdrop>
-//           <div style={{ height: 10 }} />
-//         </div>
-//         {contextHolder}
-
-//         {/* <h2>{d.sex == "male" ? "男" : d.sex == "female" ? "女" : "混合"} {d.title}, {getClass(d, d.event)[p - 1][0] ?? "未定"} - {getClass(d, d.event)[p - 1][1] ?? "未定"}</h2> */}
-//         {/* @ts-ignore */}
-//         <h2>{d.title}, {getClass(d, d.event)[p - 1][0] ?? "未定"} - {getClass(d, d.event)[p - 1][1] ?? "未定"}</h2>
-//         <p>{new Date(d[`p_${p}`].scheduledAt).toLocaleString('en-us', { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit", hour12: false })}開始予定</p>
-//         <Button variant="contained" color="warning" onClick={handleStartEnd} disabled={d[`p_${p}`].startedAt != null && d[`p_${p}`].endedAt != null}>
-//           {d[`p_${p}`].startedAt == null ? "試合を開始" : d[`p_${p}`].endedAt == null ? "試合を終了し記録" : "-"}
-//         </Button>
-//         {
-//           d[`p_${p}`].startedAt != null && d[`p_${p}`].endedAt == null ?
-//             <ModalContent setGame={sD} p={p} game={d} />
-//             : null
-//         }
-
-//       </div>
-//     )
-//   } else {
-//     <><Header />{contextHolder}</>
-//   }
-// }
-
 import { TournamentCellData } from "@/pages/tournament"
 import { wl } from "@/util/wl"
+import { ModalContent } from '@/components/record/inputs'
+
+function hasInvalidResults(match: any, p: any): boolean {
+  const isNumber = (v: number | null | ''): v is number | null =>
+    v === null || (typeof v === 'number' && Number.isInteger(v) && v >= 0)
+
+  const getRoundOutcome = (
+    u: number | '',
+    l: number | '',
+    fHitted?: '' | 'l' | 'h'
+  ): 'l' | 'h' | 'draw' | 'incomplete' => {
+    if (!isNumber(u) || !isNumber(l)) return 'incomplete';
+    if (u > l) return 'l';
+    if (l > u) return 'h';
+    if (fHitted === 'l') return 'l';
+    if (fHitted === 'h') return 'h';
+    return 'draw';
+  };
+
+  switch (match.event) {
+    case 'volleyball':
+    case 'badminton':
+    case 'dodgeball': {
+      const outcomes = [1, 2, 3].map((i: number) =>
+        getRoundOutcome(match[`p_${p}`][`l_p${i}`], match[`p_${p}`][`h_p${i}`], match.event == 'dodgeball' ? match[`p_${p}`].fHitted[`p${i}`] : undefined)
+      );
+
+      const upperWins = outcomes.filter((o: any) => o === 'l').length
+      const lowerWins = outcomes.filter((o: any) => o === 'h').length
+      const draws = outcomes.filter((o: any) => o === 'draw').length
+      const incomplete = outcomes.includes('incomplete')
+
+      const someoneWonTwo = upperWins >= 2 || lowerWins >= 2
+      const draw2oneDecided = draws === 2 && (upperWins + lowerWins === 1)
+
+      console.log(outcomes)
+      console.log(match[`p_${p}`], match.event)
+
+      if (match.event === 'dodgeball') {
+        for (let i = 0; i < 3; i++) {
+          if (match[`p_${p}`][`l_p${i+1}`] == match[`p_${p}`][`h_p${i+1}`] && match[`p_${p}`].fHitted[`p${i+1}`] == null) {
+            return true
+          }
+        }
+      }
+
+      return !(someoneWonTwo || draw2oneDecided) || incomplete
+    }
+
+    case 'esport': {
+      const u = match[`p_${p}`]['l_p1']
+      const l = match[`p_${p}`]['h_p1']
+
+      if (!isNumber(u) || !isNumber(l)) return true
+
+      if (u !== l) {
+        // 勝敗がついているならOK
+        return false
+      }
+
+      // 同点の場合、eSport フラグで決着が必要
+      const winnerByFlag = match[`p_${p}`].eSport
+      return winnerByFlag !== 'l' && winnerByFlag !== 'h'
+    }
+
+    case 'soccer': {
+      const u = match[`p_${p}`]['l_p1']
+      const l = match[`p_${p}`]['h_p1']
+      const valid = isNumber(u) && isNumber(l)
+      return !valid
+    }
+
+    default:
+      return true // 未知の競技は不備ありとする
+  }
+}
 
 const Tournament: React.FC<{ cells: Record<string, TournamentCellData>, data: any }> = ({ cells, data }) => {
   const colors = ["#adb5bd", "#dc3545"]
@@ -158,25 +123,69 @@ const Tournament: React.FC<{ cells: Record<string, TournamentCellData>, data: an
   )
 }
 
+const Info = ({ isLoading, contextHolder }: any) => {
+  return (
+    <>
+      <div style={{ position: "relative", maxWidth: 330, margin: "auto" }}>
+        <Backdrop
+          sx={{ color: "#fff", zIndex: 9999 }}
+          open={isLoading}
+        >
+          <CircularProgress color="inherit" />
+        </Backdrop>
+        <div style={{ height: 10 }} />
+      </div>
+      {contextHolder}
+    </>
+  )
+}
+
 type RoundValue = number | ''
 
 const Post = () => {
   const [phase, setPhase] = useState(0)
   const [match, setMatch] = useState<any>()
+  const [isLoading, setIsLoading] = useState(false)
   const [results, setResults] = useState<any>({
-    upper: Array(3).fill(''),
-    lower: Array(3).fill(''),
+    l: Array(3).fill(''),
+    h: Array(3).fill(''),
   });
+
+  const [api, contextHolder] = notification.useNotification()
+  const eAPI = (message: string, description = "だめですごめんなさい") => {
+    api.error({ message: message, description: description, duration: 6, placement: "bottomRight", className: "custom-notification" })
+  }
+
+  const handleSubmit = async () => {
+    setIsLoading(true)
+    if (hasInvalidResults(match, p)) { eAPI('入力に不備あり'); setIsLoading(false); return }
+    await APIpost(
+      `/match/${id}/${p}/${pId}`,
+      { game: match[`p_${p}`] },
+      () => { eAPI("記録に失敗") },
+      () => { setIsLoading(false) },
+      () => { },
+      () => { setPhase(3) }
+    )
+  }
 
   const router = useRouter()
   const { pId, id, p } = router.query
 
   const template = _.cloneDeep(data1)
 
+  const [fHitted, setFHitted] = useState<('' | 'l' | 'h')[]>(['', '', '']);
+  const updateFHitted = (index: number, value: '' | 'l' | 'h') => {
+    const updated = [...fHitted];
+    updated[index] = value;
+    setFHitted(updated);
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       if (!(pId && id && p)) return
-      const res = await APIget(`match/${id}`, () => { }, () => { })
+      setIsLoading(true)
+      const res = await APIget(`match/${id}`, () => { }, () => { setIsLoading(false) })
       setMatch(res)
     }
     fetchData()
@@ -189,8 +198,8 @@ const Post = () => {
         const lKey = `l_p${round}`;
         const hKey = `h_p${round}`;
 
-        pMatch[`p_${p}`][lKey] = results.upper[round - 1];
-        pMatch[`p_${p}`][hKey] = results.lower[round - 1];
+        pMatch[`p_${p}`][lKey] = results.l[round - 1];
+        pMatch[`p_${p}`][hKey] = results.h[round - 1];
       }
       return pMatch
     })
@@ -205,11 +214,9 @@ const Post = () => {
 
     // @ts-ignore
     if (value === '' || !isNaN(newValue)) {
-      // @ts-ignore
-      setResults(prev => ({
+      setResults((prev: any) => ({
         ...prev,
-        // @ts-ignore
-        [group]: prev[group].map((r, i) =>
+        [group]: prev[group].map((r: any, i: any) =>
           i === roundIndex ? newValue : r
         ),
       }));
@@ -219,17 +226,20 @@ const Post = () => {
   if (phase == 0 && match) {
     return (
       <div>
+        {/* @ts-ignore */}
+        <h2>{match.sex == "male" ? "男" : match.sex == "female" ? "女" : "混合"} {match.title}, {getClass(match, match.event)[parseInt(p) - 1][0] ?? "未定"} - {getClass(match, match.event)[parseInt(p) - 1][1] ?? "未定"}</h2>
+        <p>{new Date(match[`p_${p}`].scheduledAt).toLocaleString('en-us', { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit", hour12: false })}開始予定</p>
         <p>{match.title}</p>
         <p>{match.sex}</p>
         <p>{match[`p_${2}`].scheduledAt}</p>
-        {/* @ts-ignore */}
-        <p>{match.match[parseInt(p ? p : "1") - 1][0]}たい{match.match[parseInt(p ? p : "1") - 1][1]}</p>
         <p>注意文</p>
         <button
           onClick={() => setPhase(1)}
         >
           つぎ
         </button>
+
+        <Info contextHolder={contextHolder} isLoading={isLoading} />
       </div>
     )
   }
@@ -238,45 +248,17 @@ const Post = () => {
     return (
       <div>
         <p>入力画面</p>
-        <table style={{ borderCollapse: 'collapse', width: '100%', maxWidth: '400px' }}>
-          <thead>
-            <tr>
-              <th style={{ border: '1px solid #ccc', padding: '6px' }}>ラウンド</th>
-              <th style={{ border: '1px solid #ccc', padding: '6px' }}>upper</th>
-              <th style={{ border: '1px solid #ccc', padding: '6px' }}>lower</th>
-            </tr>
-          </thead>
-          <tbody>
-            {Array.from({ length: 3 }, (_, i) => (
-              <tr key={i}>
-                <td style={{ border: '1px solid #ccc', textAlign: 'center' }}>{i + 1}</td>
-                <td style={{ border: '1px solid #ccc', padding: '6px' }}>
-                  <input
-                    type="number"
-                    value={results.upper[i]}
-                    onChange={(e) => handleChange('upper', i, e.target.value)}
-                    style={{ width: '100%' }}
-                  />
-                </td>
-                <td style={{ border: '1px solid #ccc', padding: '6px' }}>
-                  <input
-                    type="number"
-                    value={results.lower[i]}
-                    onChange={(e) => handleChange('lower', i, e.target.value)}
-                    style={{ width: '100%' }}
-                  />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        <pre>{JSON.stringify(results, null, 2)}</pre>
-        <code>{JSON.stringify(match, null, 2)}</code>
+
+        {/* @ts-ignore */}
+        <ModalContent setGame={setMatch} game={match} p={parseInt(p)} />
+
         <button
           onClick={() => setPhase(2)}
         >
           つぎ
         </button>
+
+        <Info contextHolder={contextHolder} isLoading={isLoading} />
       </div>
     )
   }
@@ -292,7 +274,7 @@ const Post = () => {
           />
         </div>
         {/* @ts-ignore */}
-        <p>{match.match[parseInt(p ? p : "1") - 1][wl(match[`p_${p}`], match.event, false, true) == 'l' ? 0 : 1]}</p>
+        {/* どっちがかったのかクライアント処理のやつ追加 */}
 
         <table style={{ borderCollapse: 'collapse', width: '100%', maxWidth: '400px' }}>
           <thead>
@@ -317,11 +299,16 @@ const Post = () => {
           </tbody>
         </table>
 
-        <button
-          onClick={() => setPhase(3)}
-        >
+        <pre>{JSON.stringify(hasInvalidResults(match, p))}</pre>
+
+        <button onClick={handleSubmit}>
           きろーく
         </button>
+        <button onClick={() => setPhase(1)}>
+          もどる
+        </button>
+
+        <Info contextHolder={contextHolder} isLoading={isLoading} />
       </div>
     )
   }
@@ -330,6 +317,8 @@ const Post = () => {
     return (
       <div>
         <p>完了とだけ、あとページ閉じてねメッセージ、あ、紙を会室にもってきてってのも載せる</p>
+
+        <Info contextHolder={contextHolder} isLoading={isLoading} />
       </div>
     )
   }
