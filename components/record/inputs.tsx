@@ -81,7 +81,7 @@ const FHitted = ({ i, setGame, game, p }: any) => {
     <Row justify="center">
       <Col flex={3}>
         <div style={{ textAlign: "left" }}>
-          <span style={{ marginTop: "25px", display: "inline-block" }}>先に当てたチーム</span>
+          <span style={{ marginTop: "25px", display: "inline-block" }}>{i} - 先に当てたチーム</span>
         </div>
       </Col>
       <Col flex={9}>
@@ -115,7 +115,7 @@ const FHitted = ({ i, setGame, game, p }: any) => {
   )
 }
 
-export const ModalContent = ({ setGame, game, p }: any) => {
+export const PointInputs = ({ setGame, game, p }: any) => {
   return (
     <>
       <PointInput pos={1} setGame={setGame} game={game} p={p} />
@@ -126,7 +126,13 @@ export const ModalContent = ({ setGame, game, p }: any) => {
             <PointInput pos={3} setGame={setGame} game={game} p={p} />
           </> : null
       }
+    </>
+  )
+}
 
+export const FlagInputs = ({ setGame, game, p }: any) => {
+  return (
+    <>
       {game.event == "dodgeball" ?
         <>
           <FHitted game={game[`p_${p}`]} setGame={setGame} i={1} p={p} />

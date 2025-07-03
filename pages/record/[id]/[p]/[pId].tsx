@@ -2,14 +2,19 @@ import { APIget, APIpost } from "@/util/api"
 import { useRouter } from "next/router"
 import { ReactNode, useEffect, useState } from "react"
 import { notification } from "antd"
-import { CircularProgress, Backdrop } from "@mui/material"
+import { Row, Col } from "antd"
+import { CircularProgress, Backdrop, Card, Button } from "@mui/material"
 import getClass from "@/util/cl"
 import draw from "@/util/draw"
 import data1 from "../../../data1.json"
 import _ from "lodash"
 import { TournamentCellData } from "@/pages/tournament"
-import { wl } from "@/util/wl"
-import { ModalContent } from '@/components/record/inputs'
+import { winL, wl } from "@/util/wl"
+import { PointInputs, FlagInputs } from '@/components/record/inputs'
+import {
+  Table, TableBody, TableCell, TableContainer,
+  TableHead, TableRow, Paper, Typography
+} from '@mui/material';
 
 function hasInvalidResults(match: any, p: any): boolean {
   const isNumber = (v: number | null | ''): v is number | null =>
@@ -78,8 +83,17 @@ function hasInvalidResults(match: any, p: any): boolean {
     case 'soccer': {
       const u = match[`p_${p}`]['l_p1']
       const l = match[`p_${p}`]['h_p1']
-      const valid = isNumber(u) && isNumber(l)
-      return !valid
+
+      if (!isNumber(u) || !isNumber(l)) return true
+
+      if (u !== l) {
+        // 勝敗がついているならOK
+        return false
+      }
+
+      // 同点の場合、pk フラグで決着が必要
+      const winnerByFlag = match[`p_${p}`].pk
+      return winnerByFlag !== 'l' && winnerByFlag !== 'h'
     }
 
     default:
@@ -141,16 +155,14 @@ const Info = ({ isLoading, contextHolder }: any) => {
   )
 }
 
-type RoundValue = number | ''
+const width = {
+  xs: 0.9, sm: 350, md: 450, lg: 450, xl: 450,
+}
 
 const Post = () => {
   const [phase, setPhase] = useState(0)
   const [match, setMatch] = useState<any>()
   const [isLoading, setIsLoading] = useState(false)
-  const [results, setResults] = useState<any>({
-    l: Array(3).fill(''),
-    h: Array(3).fill(''),
-  });
 
   const [api, contextHolder] = notification.useNotification()
   const eAPI = (message: string, description = "だめですごめんなさい") => {
@@ -175,13 +187,6 @@ const Post = () => {
 
   const template = _.cloneDeep(data1)
 
-  const [fHitted, setFHitted] = useState<('' | 'l' | 'h')[]>(['', '', '']);
-  const updateFHitted = (index: number, value: '' | 'l' | 'h') => {
-    const updated = [...fHitted];
-    updated[index] = value;
-    setFHitted(updated);
-  };
-
   useEffect(() => {
     const fetchData = async () => {
       if (!(pId && id && p)) return
@@ -192,54 +197,36 @@ const Post = () => {
     fetchData()
   }, [pId, id, p])
 
-  useEffect(() => {
-    if (!match) return
-    setMatch((pMatch: any) => {
-      for (let round = 1; round <= 3; round++) {
-        const lKey = `l_p${round}`;
-        const hKey = `h_p${round}`;
-
-        pMatch[`p_${p}`][lKey] = results.l[round - 1];
-        pMatch[`p_${p}`][hKey] = results.h[round - 1];
-      }
-      return pMatch
-    })
-  }, [results])
-
-  const handleChange = (
-    group: string,
-    roundIndex: number,
-    value: string
-  ) => {
-    const newValue: RoundValue = value === '' ? '' : parseInt(value, 10);
-
-    // @ts-ignore
-    if (value === '' || !isNaN(newValue)) {
-      setResults((prev: any) => ({
-        ...prev,
-        [group]: prev[group].map((r: any, i: any) =>
-          i === roundIndex ? newValue : r
-        ),
-      }));
-    }
-  };
-
   if (phase == 0 && match) {
     return (
       <div>
-        {/* @ts-ignore */}
-        <h2>{match.sex == "male" ? "男" : match.sex == "female" ? "女" : "混合"} {match.title}, {getClass(match, match.event)[parseInt(p) - 1][0] ?? "未定"} - {getClass(match, match.event)[parseInt(p) - 1][1] ?? "未定"}</h2>
-        <p>{new Date(match[`p_${p}`].scheduledAt).toLocaleString('en-us', { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit", hour12: false })}開始予定</p>
-        <p>{match.title}</p>
-        <p>{match.sex}</p>
-        <p>{match[`p_${2}`].scheduledAt}</p>
-        <p>注意文</p>
-        <button
-          onClick={() => setPhase(1)}
-          disabled={match[`p_${p}`].recordedAt}
-        >
-          つぎ
-        </button>
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <h2>試合結果入力</h2>
+        </div>
+
+        <div style={{ display: "flex", justifyContent: "center", marginTop: 24 }}>
+          <Card
+            sx={{ width: width }}
+            style={{ backgroundColor: "#f4f4f5", borderRadius: 9, padding: 24 }}
+          >
+            {/* @ts-ignore */}
+            <h3>{match.gread}年, {match.title}, {getClass(match, match.event)[parseInt(p) - 1][0] ?? "未定"}組 対 {getClass(match, match.event)[parseInt(p) - 1][1] ?? "未定"}組</h3>
+            <p>{new Date(match[`p_${p}`].scheduledAt).toLocaleString('en-us', { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit", hour12: false })}開始予定</p>
+
+            <h4>記録用紙に記名した生徒会関係者が入力してください</h4>
+          </Card>
+        </div>
+
+        <div style={{ display: "flex", justifyContent: "center", marginTop: 24 }}>
+          <Button
+            onClick={() => setPhase(1)}
+            disabled={match[`p_${p}`].recordedAt}
+            color="warning"
+            variant="contained"
+          >
+            {match[`p_${p}`].recordedAt ? '入力済み' : '入力画面へ進む'}
+          </Button>
+        </div>
 
         <Info contextHolder={contextHolder} isLoading={isLoading} />
       </div>
@@ -249,16 +236,73 @@ const Post = () => {
   if (phase == 1) {
     return (
       <div>
-        <p>入力画面</p>
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <h2>入力画面</h2>
+        </div>
 
-        {/* @ts-ignore */}
-        <ModalContent setGame={setMatch} game={match} p={parseInt(p)} />
+        <div style={{ display: "flex", justifyContent: "center", marginTop: 24 }}>
+          <Card
+            sx={{ width: width }}
+            style={{ backgroundColor: "#f4f4f5", borderRadius: 9, padding: 24 }}
+          >
 
-        <button
-          onClick={() => setPhase(2)}
-        >
-          つぎ
-        </button>
+            <Row justify="center" gutter={12} wrap={false}>
+              <Col span={3} />
+              <Col span={3.5}>
+                <div style={{ textAlign: "center" }}>
+                  <h2>
+                    {/* @ts-ignore */}
+                    {getClass(match, match.event)[parseInt(p) - 1][0] ?? "未定"}組
+                  </h2>
+                </div>
+              </Col>
+              <Col span={2}>
+                <div style={{ textAlign: "center" }}>
+                  <span style={{ marginTop: "22px", display: "inline-block" }}>対</span>
+                </div>
+              </Col>
+              <Col span={3.5}>
+                <div style={{ textAlign: "center" }}>
+                  <h2>
+                    {/* @ts-ignore */}
+                    {getClass(match, match.event)[parseInt(p) - 1][1] ?? "未定"}組
+                  </h2>
+                </div>
+              </Col>
+              <Col span={4} />
+            </Row>
+
+            {/* @ts-ignore */}
+            <PointInputs setGame={setMatch} game={match} p={parseInt(p)} />
+
+            {/* @ts-ignore */}
+            <FlagInputs setGame={setMatch} game={match} p={parseInt(p)} />
+          </Card>
+        </div>
+
+        <div style={{ display: "flex", justifyContent: "center", marginTop: 24 }}>
+          <div style={{ display: "flex", justifyContent: "center", marginTop: 24 }}>
+            <Button
+              onClick={() => setPhase(0)}
+              color="success"
+              variant="contained"
+            >
+              戻る
+            </Button>
+          </div>
+
+          <div style={{ width: 20 }} />
+
+          <div style={{ display: "flex", justifyContent: "center", marginTop: 24 }}>
+            <Button
+              onClick={() => setPhase(2)}
+              color="warning"
+              variant="contained"
+            >
+              確認画面に進む
+            </Button>
+          </div>
+        </div>
 
         <Info contextHolder={contextHolder} isLoading={isLoading} />
       </div>
@@ -266,53 +310,114 @@ const Post = () => {
   }
 
   if (phase == 2) {
+    const roundCount = ['volleyball', 'badminton', 'dodgeball'].includes(match.event) ? 3
+      : ['esport', 'soccer'].includes(match.event) ? 1 : 0
     return (
       <div>
-        <p>確認画面、トーナメント表がこうなるよーってやつとか時間あったらいれたい</p>
-        <div style={{ width: `${30 * 15 + 10}px`, height: `${320 + 10}px`, overflowY: "hidden", position: "relative" }}>
-          {hasInvalidResults(match, p) ?
-            <></>
-            : <Tournament
-              cells={draw(match, template, match.event, true)}
-              data={match}
-            />
-          }
-
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <h2>確認画面</h2>
         </div>
-        {/* @ts-ignore */}
-        {/* どっちがかったのかクライアント処理のやつ追加 */}
 
-        <table style={{ borderCollapse: 'collapse', width: '100%', maxWidth: '400px' }}>
-          <thead>
-            <tr>
-              <th style={{ border: '1px solid #ccc', padding: '6px' }}>ラウンド</th>
-              <th style={{ border: '1px solid #ccc', padding: '6px' }}>l</th>
-              <th style={{ border: '1px solid #ccc', padding: '6px' }}>h</th>
-            </tr>
-          </thead>
-          <tbody>
-            {[1, 2, 3].map(round => {
-              const l = match[`p_${p}`][`l_p${round}`]
-              const h = match[`p_${p}`][`h_p${round}`]
-              return (
-                <tr key={round}>
-                  <td style={{ border: '1px solid #ccc', textAlign: 'center' }}>{round}</td>
-                  <td style={{ border: '1px solid #ccc', textAlign: 'center' }}>{l}</td>
-                  <td style={{ border: '1px solid #ccc', textAlign: 'center' }}>{h}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+        <div style={{ display: "flex", justifyContent: "center", marginTop: 24 }}>
+          <Card
+            sx={{ width: width }}
+            style={{ backgroundColor: "#f4f4f5", borderRadius: 9, padding: 24 }}
+          >
+            <h3>入力データの確認</h3>
+            <TableContainer component={Paper} sx={{ margin: 'auto' }}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell align="center">ラウンド</TableCell>
+                    <TableCell align="center">l</TableCell>
+                    <TableCell align="center">h</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {Array.from({ length: roundCount }, (_, i) => i).map(i => {
+                    const roundKey = roundCount === 1 ? 0 : i + 1;
+                    const l = match[`p_${p}`][`l_p${roundKey}`];
+                    const h = match[`p_${p}`][`h_p${roundKey}`];
 
-        <pre>{JSON.stringify(hasInvalidResults(match, p))}</pre>
+                    // 各種フラグ取得
+                    const isDodgeball = match.event === 'dodgeball';
+                    const isEsport = match.event === 'esport';
+                    const isSoccer = match.event === 'soccer';
 
-        <button onClick={handleSubmit}>
-          きろーく
-        </button>
-        <button onClick={() => setPhase(1)}>
-          もどる
-        </button>
+                    const fHitted = isDodgeball ? match[`p_${p}`]?.fHitted?.[`p${i + 1}`] : '';
+                    const eSport = isEsport ? match[`p_${p}`]?.eSport : '';
+                    const pk = isSoccer ? match[`p_${p}`]?.soccer : '';
+
+                    // フラグが 'l' / 'h' のとき常に強調表示
+                    const highlightL =
+                      (isEsport && eSport === 'l') ||
+                      (isDodgeball && fHitted === 'l') ||
+                      (isSoccer && pk === 'l');
+
+                    const highlightH =
+                      (isEsport && eSport === 'h') ||
+                      (isDodgeball && fHitted === 'h') ||
+                      (isSoccer && pk === 'h');
+
+                    return (
+                      <TableRow key={i}>
+                        <TableCell align="center">{roundKey}</TableCell>
+                        <TableCell align="center" sx={highlightL ? { color: 'red', fontWeight: 'bold' } : {}}>{l ?? '-'}</TableCell>
+                        <TableCell align="center" sx={highlightH ? { color: 'red', fontWeight: 'bold' } : {}}>{h ?? '-'}</TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </TableContainer>
+
+            <p>PK,先当て,最高得点者が赤字になっています</p>
+          </Card>
+        </div>
+
+        <div style={{ display: "flex", justifyContent: "center", marginTop: 24 }}>
+          <Card
+            sx={{ width: width }}
+            style={{ backgroundColor: "#f4f4f5", borderRadius: 9, padding: 24 }}
+          >
+            {/* @ts-ignore */}
+            <h3>{getClass(match, match.event)[parseInt(p) - 1][winL(match[`p_${p}`], match.event, false, true) ? 0 : 1]}組勝利</h3>
+            <p>反映後トーナメント表</p>
+            <div style={{ width: `${30 * 15 + 0}px`, height: `${320 + 10}px`, overflowY: "scroll", position: "relative" }}>
+              {hasInvalidResults(match, p) ?
+                <h3>入力データに不備あり</h3>
+                : <Tournament
+                  cells={draw(match, template, match.event, true)}
+                  data={match}
+                />
+              }
+            </div>
+          </Card>
+        </div>
+
+        <div style={{ display: "flex", justifyContent: "center", marginTop: 24 }}>
+          <div style={{ display: "flex", justifyContent: "center", marginTop: 24 }}>
+            <Button
+              onClick={() => setPhase(1)}
+              color="success"
+              variant="contained"
+            >
+              戻る
+            </Button>
+          </div>
+
+          <div style={{ width: 20 }} />
+
+          <div style={{ display: "flex", justifyContent: "center", marginTop: 24 }}>
+            <Button
+              onClick={handleSubmit}
+              color="warning"
+              variant="contained"
+            >
+              記録する
+            </Button>
+          </div>
+        </div>
 
         <Info contextHolder={contextHolder} isLoading={isLoading} />
       </div>
@@ -322,7 +427,13 @@ const Post = () => {
   if (phase == 3) {
     return (
       <div>
-        <p>完了とだけ、あとページ閉じてねメッセージ、あ、紙を会室にもってきてってのも載せる</p>
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <h2>保存完了</h2>
+        </div>
+
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <p>記録用紙を生徒会室に持ってきてください</p>
+        </div>
 
         <Info contextHolder={contextHolder} isLoading={isLoading} />
       </div>
