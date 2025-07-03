@@ -15,6 +15,7 @@ import {
   Table, TableBody, TableCell, TableContainer,
   TableHead, TableRow, Paper, Typography
 } from '@mui/material';
+import Head from "next/head"
 
 function hasInvalidResults(match: any, p: any): boolean {
   const isNumber = (v: number | null | ''): v is number | null =>
@@ -141,6 +142,8 @@ const Tournament: React.FC<{ cells: Record<string, TournamentCellData>, data: an
 const Info = ({ isLoading, contextHolder }: any) => {
   return (
     <>
+      <Head><title>結果記録</title></Head>
+
       <div style={{ position: "relative", maxWidth: 330, margin: "auto" }}>
         <Backdrop
           sx={{ color: "#fff", zIndex: 9999 }}
