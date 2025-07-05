@@ -93,7 +93,7 @@ function hasInvalidResults(match: any, p: any): boolean {
       }
 
       // 同点の場合、pk フラグで決着が必要
-      const winnerByFlag = match[`p_${p}`].pk
+      const winnerByFlag = match[`p_${p}`].soccer
       return winnerByFlag !== 'l' && winnerByFlag !== 'h'
     }
 
@@ -332,13 +332,15 @@ const Post = () => {
                 <TableHead>
                   <TableRow>
                     <TableCell align="center">ラウンド</TableCell>
-                    <TableCell align="center">l</TableCell>
-                    <TableCell align="center">h</TableCell>
+                    {/* @ts-ignore */}
+                    <TableCell align="center">{getClass(match, match.event)[parseInt(p) - 1][0] ?? "未定"}組</TableCell>
+                    {/* @ts-ignore */}
+                    <TableCell align="center">{getClass(match, match.event)[parseInt(p) - 1][1] ?? "未定"}組</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {Array.from({ length: roundCount }, (_, i) => i).map(i => {
-                    const roundKey = roundCount === 1 ? 0 : i + 1;
+                    const roundKey = roundCount === 1 ? 1 : i + 1;
                     const l = match[`p_${p}`][`l_p${roundKey}`];
                     const h = match[`p_${p}`][`h_p${roundKey}`];
 
