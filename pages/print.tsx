@@ -3,6 +3,7 @@ import { QRCodeSVG } from "qrcode.react"
 import getClass, { getClass2 } from "@/util/cl"
 import { TournamentCellData } from "@/pages/tournament"
 import draw from "@/util/draw"
+import { useTokenStore } from "@/util/store"
 import data1 from "./data1.json"
 import _ from "lodash"
 import {
@@ -16,6 +17,7 @@ import {
   SxProps,
   Theme,
 } from '@mui/material'
+import { APIpost } from "@/util/api"
 
 const resize = () => {
   const width = window.innerWidth
@@ -51,7 +53,7 @@ const fadedText: SxProps<Theme> = {
 const BASE_URL = 'http://localhost:3000'
 
 const Tournament: React.FC<{ cells: Record<string, TournamentCellData>, data: any, place: number }> = ({ cells, data, place }) => {
-  const colors = ["#adb5bd", "#dc3545"]
+  const colors = ["#adb5bd", "#adb5bd"]
   const width = 30
   const height = 50
 
@@ -229,7 +231,7 @@ const SelectGroupSplitTable: React.FC<SelectGroupSplitTableProps> = ({
 
 const Tables = ({ match, p }: any) => {
   const l = getClass(match, match.event)[p][0] ?? getClass2(match)[p][0].join(' , ') + ' '
-  const h = getClass(match, match.event)[p][0] ?? getClass2(match)[p][1].join(' , ') + ' '
+  const h = getClass(match, match.event)[p][1] ?? getClass2(match)[p][1].join(' , ') + ' '
 
   switch (match.event) {
     case 'volleyball':
@@ -274,6 +276,9 @@ const Print = () => {
   const handleResize = () => {
     setInnerSize(resize())
   }
+  const token = useTokenStore((s) => s.token)
+  const updateToken = useTokenStore((s) => s.setToken)
+  const [datas, setDatas] = useState([])
 
   useEffect(() => {
     handleResize()
@@ -281,145 +286,15 @@ const Print = () => {
     window.addEventListener("orientationchange", handleResize)
   }, [])
 
-  const template = _.cloneDeep(data1)
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!token) return
+      const res = await APIpost(`get/seet`, { token: token }, () => { }, () => { }, () => { updateToken("") })
 
-  const datas = [
-    {
-      "id": "cmcfvk60p002507rot2tkxam5",
-      "title": "女バドミントン",
-      "gread": 3,
-      "sex": "female",
-      "order": 1,
-      "event": "badminton",
-      "c_1": 4,
-      "c_2": 3,
-      "c_3": 7,
-      "c_4": 1,
-      "c_5": 6,
-      "c_6": 5,
-      "c_7": 2,
-      "p_1": {
-        "l_p1": null,
-        "h_p1": null,
-        "l_p2": null,
-        "h_p2": null,
-        "l_p3": null,
-        "h_p3": null,
-        "fHitted": {
-          "p1": null,
-          "p2": null,
-          "p3": null
-        },
-        "eSport": null,
-        "soccer": null,
-        "place": "a2",
-        "placeId": "cmcfvk60p002607ro0796u34g",
-        "scheduledAt": 1752711600000,
-        "recordedAt": null,
-        "applied": true
-      },
-      "p_2": {
-        "l_p1": null,
-        "h_p1": null,
-        "l_p2": null,
-        "h_p2": null,
-        "l_p3": null,
-        "h_p3": null,
-        "fHitted": {
-          "p1": null,
-          "p2": null,
-          "p3": null
-        },
-        "eSport": null,
-        "soccer": null,
-        "place": "a2",
-        "placeId": "cmcfvk60p002707roldm89qrl",
-        "scheduledAt": 1752630600000,
-        "recordedAt": null,
-        "applied": true
-      },
-      "p_3": {
-        "l_p1": null,
-        "h_p1": null,
-        "l_p2": null,
-        "h_p2": null,
-        "l_p3": null,
-        "h_p3": null,
-        "fHitted": {
-          "p1": null,
-          "p2": null,
-          "p3": null
-        },
-        "eSport": null,
-        "soccer": null,
-        "place": "a2",
-        "placeId": "cmcfvk60p002807rok403qyf5",
-        "scheduledAt": 1752709200000,
-        "recordedAt": null,
-        "applied": true
-      },
-      "p_4": {
-        "l_p1": null,
-        "h_p1": null,
-        "l_p2": null,
-        "h_p2": null,
-        "l_p3": null,
-        "h_p3": null,
-        "fHitted": {
-          "p1": null,
-          "p2": null,
-          "p3": null
-        },
-        "eSport": null,
-        "soccer": null,
-        "place": "c2",
-        "placeId": "cmcfvk60p002907ro0zivxe0a",
-        "scheduledAt": 1752716400000,
-        "recordedAt": null,
-        "applied": true
-      },
-      "p_5": {
-        "l_p1": null,
-        "h_p1": null,
-        "l_p2": null,
-        "h_p2": null,
-        "l_p3": null,
-        "h_p3": null,
-        "fHitted": {
-          "p1": null,
-          "p2": null,
-          "p3": null
-        },
-        "eSport": null,
-        "soccer": null,
-        "place": "d2",
-        "placeId": "cmcfvk60p002a07rorkpzucbl",
-        "scheduledAt": 1752716400000,
-        "recordedAt": null,
-        "applied": true
-      },
-      "p_6": {
-        "l_p1": null,
-        "h_p1": null,
-        "l_p2": null,
-        "h_p2": null,
-        "l_p3": null,
-        "h_p3": null,
-        "fHitted": {
-          "p1": null,
-          "p2": null,
-          "p3": null
-        },
-        "eSport": null,
-        "soccer": null,
-        "place": "b2",
-        "placeId": "cmcfvk60p002b07rostpsss8o",
-        "scheduledAt": 1752723600000,
-        "recordedAt": null,
-        "applied": true
-      }
+      setDatas(res.data)
     }
-  ]
+    fetchData()
+  }, [token])
 
   return (
     <div>
@@ -427,7 +302,7 @@ const Print = () => {
         return (
           <>
             {
-              [...Array(6)].map((_, j) => {
+              [...Array(6)].map((a, j) => {
                 return (
                   <>
                     <div style={{ width: innerSize.width, height: innerSize.height25, display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
@@ -471,9 +346,9 @@ const Print = () => {
                       <div style={{ width: '10%', writingMode: 'vertical-lr', paddingLeft: '5%', paddingTop: '15%' }}>
                         生徒会役員以外ホチキス開封禁止
                       </div>
-                      <div style={{ width: '45%', paddingTop: '5%', paddingRight: '0%' }}>
+                      <div style={{ width: '45%', paddingTop: '3%', paddingRight: '0%' }}>
                         <h3>注意事項・指示(バド、バレー)</h3>
-                        <p>生徒会役員から記録用紙を受け取ったら下の試合についての情報を確認し、記録者の欄に記名し、初戦以外では表の試合に該当するクラスに丸をつけてください。表の通りに結果を書き込み、試合が終了したら生徒会役員に返却してください。</p>
+                        <p>生徒会役員から記録用紙を受け取ったら下の試合についての情報を確認し、記録者の欄に記名し、初戦以外では表の試合に該当するクラスに丸をつけてください。表の通りに結果を書き込み、最終的に勝利したクラスを書き、試合が終了したら生徒会役員に返却してください。</p>
                         <p>不明なことがあった場合、生徒会役員に質問してください</p>
                         <h5>他種目は事前の指示通り</h5>
 
@@ -484,13 +359,14 @@ const Print = () => {
 
                         <div style={{ width: `${30 * 15 + 0}px`, height: `${320 + 10}px`, overflowY: "scroll", position: "relative" }}>
                           <Tournament
-                            cells={draw(v, template, v.event, true)}
+                            // @ts-ignore
+                            cells={draw(v, _.cloneDeep(data1), v.event, true)}
                             data={v}
                             place={j + 1}
                           />
                         </div>
                       </div>
-                      <div style={{ width: '35%', marginLeft: '3%', paddingTop: '5%' }}>
+                      <div style={{ width: '35%', marginLeft: '3%', paddingTop: '3%' }}>
                         <h3>記録者氏名(学籍番号)</h3>
                         <div style={{
                           width: "90%",
@@ -510,6 +386,8 @@ const Print = () => {
                         <div style={{ width: '90%', marginTop: '5%' }}>
                           <Tables match={v} p={j} />
                         </div>
+
+                        <h3>勝利クラス:&emsp;&emsp;&emsp;&emsp;組</h3>
                       </div>
                       <div style={{ width: '10%', writingMode: 'vertical-lr', paddingRight: '5%', paddingTop: '15%' }}>
                         生徒会役員以外ホチキス開封禁止
