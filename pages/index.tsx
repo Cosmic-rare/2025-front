@@ -17,16 +17,17 @@ const width = {
 }
 
 export async function getStaticProps() {
+  const res = await APIget("/get/3", () => { }, () => { })
 
   return {
     props: {
-      
+      data: res.data
     },
     revalidate: 10
   };
 }
 
-const Index = ({ }: any) => {
+const Index = ({ data }: any) => {
   return (
     <div>
       <Head>
@@ -72,7 +73,6 @@ const Index = ({ }: any) => {
           style={{ backgroundColor: "#eae9eb", borderRadius: 9, padding: 24 }}
         >
           <h3>種目毎優勝・準優勝クラス</h3>
-          
         </Card>
       </div>
     </div>
