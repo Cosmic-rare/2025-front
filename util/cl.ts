@@ -1,5 +1,21 @@
 import { winL } from "./wl"
 
+export const getClass2 = (data1: any) => {
+  let match: any = [[[data1["c_1"]], [data1["c_2"]]], [[data1["c_3"]], [data1["c_4"]]], [[data1["c_5"]], [data1["c_6"]]], [[], []], [[], [data1["c_7"]]], [[], []]]
+
+  for (let i = 1; i < 6; i++) {
+    const d = data1[`p_${i}`]
+
+    const p1 = (i == 1 || i == 2) ? 4 : (i == 3) ? 5 : (i != 6) ? 6 : 0
+    const p2 = [1, 3, 4].includes(i) ? 0 : 1
+    match[p1 - 1][p2] = d.recordedAt ?
+      match[i - 1][winL(d, data1.event, true, d.recordedAt) ? 0 : 1] :
+      [].concat(match[i - 1][0], match[i - 1][1])
+  }
+
+  return match
+}
+
 const getClass = (r: any, e: string) => {
   const a = true
   let d: any = [[null, null], [null, null], [null, null], [null, null], [null, null], [null, null], [null]]

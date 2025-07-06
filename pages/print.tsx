@@ -1,10 +1,21 @@
 import { ReactNode, useState, useEffect } from "react"
 import { QRCodeSVG } from "qrcode.react"
-import getClass from "@/util/cl"
+import getClass, { getClass2 } from "@/util/cl"
 import { TournamentCellData } from "@/pages/tournament"
 import draw from "@/util/draw"
 import data1 from "./data1.json"
 import _ from "lodash"
+import {
+  Box,
+  Typography,
+  Table,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableCell,
+  SxProps,
+  Theme,
+} from '@mui/material'
 
 const resize = () => {
   const width = window.innerWidth
@@ -13,6 +24,29 @@ const resize = () => {
   const height50 = height - 2 * height25
   return { height: height, width: width, height25: height25, height50: height50 }
 }
+
+/* 横線だけの共通スタイル ------------------------------------ */
+const hBorder: SxProps<Theme> = {
+  borderLeft: 0,
+  borderRight: 0,
+  borderTop: 0,
+  borderBottom: '1px solid',
+  borderColor: 'common.black',
+};
+
+/* ヘッダー行（下線 2px） */
+const headerCell: SxProps<Theme> = {
+  ...hBorder,
+  borderBottomWidth: 2,
+  fontWeight: 'bold',
+};
+
+/* 小さめ薄め文字 */
+const fadedText: SxProps<Theme> = {
+  fontSize: '0.75rem',
+  color: 'text.secondary',
+  textAlign: 'center',
+};
 
 const BASE_URL = 'http://localhost:3000'
 
@@ -52,31 +86,182 @@ const Tournament: React.FC<{ cells: Record<string, TournamentCellData>, data: an
   )
 }
 
-const RecordTable = ({ match }: any) => {
+/* ①② ラウンド表 ------------------------------------------------ */
+interface RoundTableProps {
+  rounds: number[];
+  l: string;          // 左側ヘッダ（デフォルト A組）
+  h: string;          // 右側ヘッダ（デフォルト B組）
+}
+const RoundTable: React.FC<RoundTableProps> = ({
+  rounds, l, h
+}) => (
+  <Box mb={6}>
+    <Table sx={{ width: '100%', borderCollapse: 'collapse' }}>
+      <TableHead>
+        <TableRow>
+          <TableCell sx={{ ...headerCell, width: '30%', textAlign: 'center' }}>
+            ラウンド
+          </TableCell>
+          <TableCell sx={{ ...headerCell, width: '35%', textAlign: 'center' }}>
+            {l}組
+          </TableCell>
+          <TableCell sx={{ ...headerCell, textAlign: 'center' }}>{h}組</TableCell>
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {rounds.map((r) => (
+          <TableRow key={r}>
+            <TableCell sx={{ ...hBorder, textAlign: 'center' }}>{r}</TableCell>
+            <TableCell sx={hBorder} />
+            <TableCell sx={hBorder} />
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  </Box>
+);
+
+/* ③ ラウンド + ヘッダー + l/h ---------------------------------- */
+interface RoundGroupTableProps {
+  headerText: string;
+  rows: number[];
+  l: string;          // 左側（デフォルト あ組）
+  h: string;          // 右側（デフォルト い組）
+}
+const RoundGroupTable: React.FC<RoundGroupTableProps> = ({
+  headerText,
+  rows,
+  l,
+  h
+}) => (
+  <Box mb={6}>
+    <Table sx={{ width: '100%', borderCollapse: 'collapse' }}>
+      <TableHead>
+        <TableRow>
+          <TableCell sx={{ ...headerCell, width: '30%', textAlign: 'center' }}>
+            ラウンド
+          </TableCell>
+          <TableCell
+            sx={{ ...headerCell, textAlign: 'center' }}
+            colSpan={2}
+          >
+            {headerText}
+          </TableCell>
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {rows.map((r) => (
+          <TableRow key={r}>
+            <TableCell
+              sx={{ ...hBorder, width: '30%', textAlign: 'center' }}
+            >
+              {r}
+            </TableCell>
+            <TableCell
+              sx={{ ...hBorder, ...fadedText, width: '35%', textAlign: 'center' }}
+            >
+              {l}組
+            </TableCell>
+            <TableCell sx={{ ...hBorder, ...fadedText, textAlign: 'center' }}>
+              {h}組
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  </Box>
+);
+
+/* ④ テキスト + 選択肢（l / 該当無し / h） ----------------------- */
+interface SelectGroupSplitTableProps {
+  text: string;
+  l: string;          // 左側（デフォルト あ組）
+  h: string;          // 右側（デフォルト い組）
+}
+const SelectGroupSplitTable: React.FC<SelectGroupSplitTableProps> = ({
+  text,
+  l,
+  h
+}) => (
+  <Box mb={6}>
+    <Table sx={{ width: '100%', borderCollapse: 'collapse' }}>
+      <TableBody>
+        {/* 上段：見出し */}
+        <TableRow>
+          <TableCell
+            colSpan={3}
+            sx={{
+              borderBottom: '2px solid',
+              borderColor: 'common.black',
+              verticalAlign: 'middle',
+              fontWeight: 'bold',
+              height: 40,
+            }}
+          >
+            {text}
+          </TableCell>
+        </TableRow>
+
+        {/* 下段：選択肢 */}
+        <TableRow>
+          {[l + '組', '該当無し', h + '組'].map((label) => (
+            <TableCell
+              key={label}
+              sx={{
+                borderBottom: '1px solid',
+                borderColor: 'common.black',
+                textAlign: 'center',
+                verticalAlign: 'middle',
+                fontSize: '0.75rem',
+                color: 'text.secondary',
+                height: 32,
+              }}
+            >
+              {label}
+            </TableCell>
+          ))}
+        </TableRow>
+      </TableBody>
+    </Table>
+  </Box>
+);
+
+
+const Tables = ({ match, p }: any) => {
+  const l = getClass(match, match.event)[p][0] ?? getClass2(match)[p][0].join(' , ') + ' '
+  const h = getClass(match, match.event)[p][0] ?? getClass2(match)[p][1].join(' , ') + ' '
+
   switch (match.event) {
     case 'volleyball':
     case 'badminton':
       return (
         <>
-          table3
+          <RoundTable rounds={[1, 2, 3]} l={l} h={h} />
         </>
       )
     case 'soccer':
       return (
         <>
-          table1, pk-flag1
+          <RoundTable rounds={[1]} l={l} h={h} />
+          <SelectGroupSplitTable text="同点時のPK" l={l} h={h} />
         </>
       )
     case 'dodgeball':
       return (
         <>
-          table3, fhitted-flag3
+          <RoundTable rounds={[1, 2, 3]} l={l} h={h} />
+          <RoundGroupTable
+            headerText="先に当てた組"
+            rows={[1, 2, 3]}
+            l={l} h={h}
+          />
         </>
       )
     case 'esport':
       return (
         <>
-          table1, flag1
+          <RoundTable rounds={[1]} l={l} h={h} />
+          <SelectGroupSplitTable text="最高得点者の組" l={l} h={h} />
         </>
       )
     default:
@@ -264,6 +449,7 @@ const Print = () => {
                         </div>
                         <p>試合終了後すぐにQRコードを読み取り入力し、自身又は相方のシフト終了時に記録用紙を生徒会室に持ってきてください</p>
                         <p>一度入力するど再入力、上書きなどができない仕様です。入力ミスがあった場合にはDiscordなどで伝えてください。修正するか入力できるようにします。</p>
+                        <p>不明なことがあった場合もDiscordなどで伝えてください</p>
                       </div>
                       <div style={{ width: '40%', display: 'flex', justifyContent: 'center', alignItems: 'center', paddingRight: "5%" }}>
                         <div>
@@ -288,10 +474,11 @@ const Print = () => {
                       <div style={{ width: '45%', paddingTop: '5%', paddingRight: '0%' }}>
                         <h3>注意事項・指示(バド、バレー)</h3>
                         <p>生徒会役員から記録用紙を受け取ったら下の試合についての情報を確認し、記録者の欄に記名し、初戦以外では表の試合に該当するクラスに丸をつけてください。表の通りに結果を書き込み、試合が終了したら生徒会役員に返却してください。</p>
+                        <p>不明なことがあった場合、生徒会役員に質問してください</p>
                         <h5>他種目は事前の指示通り</h5>
 
                         {/* @ts-ignore */}
-                        <h3>{v.gread}年, {v.title}, {getClass(v, v.event)[j][0] ?? "未定"}組 対 {getClass(v, v.event)[j][1] ?? "未定"}組</h3>
+                        <h3>{v.gread}年, {v.title}, {getClass(v, v.event)[j][0] ?? getClass2(v)[j][0].join(',')}組 対 {getClass(v, v.event)[j][1] ?? getClass2(v)[j][1].join(',')}組</h3>
                         {/* @ts-ignore */}
                         <p>{new Date(v[`p_${j + 1}`].scheduledAt).toLocaleString('en-us', { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit", hour12: false })}開始予定</p>
 
@@ -320,8 +507,8 @@ const Print = () => {
                           <span>)</span>
                         </div>
 
-                        <div>
-                          <RecordTable match={v} />
+                        <div style={{ width: '90%', marginTop: '5%' }}>
+                          <Tables match={v} p={j} />
                         </div>
                       </div>
                       <div style={{ width: '10%', writingMode: 'vertical-lr', paddingRight: '5%', paddingTop: '15%' }}>
