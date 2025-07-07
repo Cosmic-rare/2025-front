@@ -406,4 +406,6 @@ const Print = () => {
 
 }
 
-export default Print
+export default dynamic(() => Promise.resolve(Print), {
+  ssr: false,
+})
