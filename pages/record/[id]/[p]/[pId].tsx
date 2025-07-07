@@ -449,7 +449,3 @@ const Post = () => {
 }
 
 export default Post
-
-Post.getLayout = function getLayout(page: ReactNode) {
-  return page
-}

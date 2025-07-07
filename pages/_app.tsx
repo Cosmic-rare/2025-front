@@ -89,14 +89,10 @@ const AnScript = () => {
   )
 }
 
-type Props = {
-  children: ReactNode
-}
-
-function DefaultLayout({ children }: Props) {
+function App({ Component, pageProps }: AppProps) {
   const BottomNav = () => {
     const router = useRouter()
-  
+
     return (
       <Paper sx={{ position: "fixed", bottom: 0, left: 0, right: 0 }} elevation={3}>
         <BottomNavigation
@@ -147,13 +143,15 @@ function DefaultLayout({ children }: Props) {
     } catch (e) { console.log(e) }
   }, [token])
 
-  if (innerSize.width <= 700) {
+  if (router.pathname.slice(0, 6) == '/print' || router.pathname.slice(0, 6) == '/recor') {
+    return <Component {...pageProps} />
+  } else if (innerSize.width <= 700) {
     return (
       <>
         <AnScript />
         <div>
           <div style={{ padding: 10, paddingBottom: 78 }}>
-            {children}
+            <Component {...pageProps} />
           </div>
           <BottomNav />
         </div>
@@ -188,7 +186,7 @@ function DefaultLayout({ children }: Props) {
 
           </div>
           <div style={{ height: "100%", width: "100%", overflowX: "scroll", padding: 10 }}>
-            {children}
+            <Component {...pageProps} />
           </div>
         </div>
       </>
@@ -196,14 +194,16 @@ function DefaultLayout({ children }: Props) {
   }
 }
 
-function App({ Component, pageProps }: AppProps) {
-  // @ts-ignore
-  const getLayout = Component.getLayout ?? ((page) => (
-    <div suppressHydrationWarning><DefaultLayout>{page}</DefaultLayout></div>
-  ))
+// function App({ Component, pageProps }: AppProps) {
+//   // @ts-ignore
+//   const getLayout = Component.getLayout ?? ((page) => (
+//     <div suppressHydrationWarning><DefaultLayout>{page}</DefaultLayout></div>
+//   ))
 
-  return getLayout(<Component {...pageProps} />)
-}
+//   return <DefaultLayout>{page}</DefaultLayout>
+
+//   return getLayout(<Component {...pageProps} />)
+// }
 
 // export default dynamic(() => Promise.resolve(App), {
 //   ssr: false

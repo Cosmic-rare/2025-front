@@ -406,13 +406,4 @@ const Print = () => {
 
 }
 
-const NoSSRPrint = dynamic(() => Promise.resolve(Print), {
-  ssr: false
-})
-
-// @ts-ignore
-NoSSRPrint.getLayout = function getLayout(page: ReactNode) {
-  return page
-}
-
-export default NoSSRPrint
+export default Print
