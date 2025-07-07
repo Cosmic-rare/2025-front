@@ -272,14 +272,22 @@ const Tables = ({ match, p }: any) => {
   }
 }
 
-const Print = () => {
+export async function getStaticProps() {
+  const res = await APIpost(`get/seet`, { }, () => { }, () => { }, () => { })
+  
+  return {
+    props: {
+      data: res.data
+    },
+    revalidate: 10
+  };
+}
+
+const Print = ({ datas }: any) => {
   const [innerSize, setInnerSize] = useState({ height: 0, width: 0, height25: 0, height50: 0 })
   const handleResize = () => {
     setInnerSize(resize())
   }
-  const token = useTokenStore((s) => s.token)
-  const updateToken = useTokenStore((s) => s.setToken)
-  const [datas, setDatas] = useState([])
 
   useEffect(() => {
     handleResize()
@@ -287,18 +295,9 @@ const Print = () => {
     window.addEventListener("orientationchange", handleResize)
   }, [])
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (!token) return
-      const res = await APIpost(`get/seet`, { token: token }, () => { }, () => { }, () => { updateToken("") })
-
-      setDatas(res.data)
-    }
-    fetchData()
-  }, [token])
-
   return (
     <div>
+      {/* @ts-ignore */}
       {datas.map((v, i) => {
         return (
           <>
@@ -406,6 +405,4 @@ const Print = () => {
 
 }
 
-export default dynamic(() => Promise.resolve(Print), {
-  ssr: false,
-})
+export default Print
