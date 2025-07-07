@@ -4,6 +4,7 @@ import getClass, { getClass2 } from "@/util/cl"
 import { TournamentCellData } from "@/pages/tournament"
 import draw from "@/util/draw"
 import { useTokenStore } from "@/util/store"
+import dynamic from "next/dynamic"
 import data1 from "./data1.json"
 import _ from "lodash"
 import {
@@ -405,8 +406,13 @@ const Print = () => {
 
 }
 
-export default Print
+const NoSSRPrint = dynamic(() => Promise.resolve(Print), {
+  ssr: false
+})
 
-Print.getLayout = function getLayout(page: ReactNode) {
+// @ts-ignore
+NoSSRPrint.getLayout = function getLayout(page: ReactNode) {
   return page
 }
+
+export default NoSSRPrint
