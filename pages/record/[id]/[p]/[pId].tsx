@@ -162,6 +162,10 @@ const width = {
   xs: 0.9, sm: 350, md: 450, lg: 450, xl: 450,
 }
 
+export async function getServerSideProps() {
+  return { }
+}
+
 const Post = () => {
   const [phase, setPhase] = useState(0)
   const [match, setMatch] = useState<any>()

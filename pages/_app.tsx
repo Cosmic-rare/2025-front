@@ -143,7 +143,8 @@ function App({ Component, pageProps }: AppProps) {
     } catch (e) { console.log(e) }
   }, [token])
 
-  if (router.pathname.slice(0, 6) == '/print' || router.pathname.slice(0, 6) == '/recor') {
+  if (router.pathname == '/print' || router.pathname == '/record/[id]/[p]/[pId]') {
+    console.log(router.pathname)
     return <Component {...pageProps} />
   } else if (innerSize.width <= 700) {
     return (
