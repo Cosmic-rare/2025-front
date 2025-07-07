@@ -17,8 +17,10 @@ const width = {
 }
 
 export async function getStaticProps() {
-  const res = await APIget("/get/3", () => { }, () => { })
-
+  // const res = await APIget("/get/3", () => { }, () => { })
+  
+  const res = { data: null }
+  
   return {
     props: {
       data: res.data
