@@ -18,7 +18,7 @@ import {
   SxProps,
   Theme,
 } from '@mui/material'
-import { APIpost } from "@/util/api"
+import { APIget } from "@/util/api"
 
 const resize = () => {
   const width = window.innerWidth
@@ -273,11 +273,11 @@ const Tables = ({ match, p }: any) => {
 }
 
 export async function getStaticProps() {
-  const res = await APIpost(`get/seet`, { }, () => { }, () => { }, () => { })
+  const res = await APIget(`get/seet`, () => { }, () => { })
   
   return {
     props: {
-      data: res.data
+      datas: res.data
     },
     revalidate: 10
   };
