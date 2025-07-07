@@ -50,7 +50,7 @@ const fadedText: SxProps<Theme> = {
   textAlign: 'center',
 };
 
-const BASE_URL = 'http://localhost:3000'
+const BASE_URL = 'https://dev.spotai.info'
 
 const Tournament: React.FC<{ cells: Record<string, TournamentCellData>, data: any, place: number }> = ({ cells, data, place }) => {
   const colors = ["#adb5bd", "#adb5bd"]
