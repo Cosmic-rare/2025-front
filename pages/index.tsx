@@ -147,11 +147,11 @@ const Index = ({ data }: any) => {
   return (
     <div>
       <Head>
-        <title>スポーツ大会2025公式</title>
+        <title>スポ大info</title>
       </Head>
 
       <div style={{ display: "flex", justifyContent: "center" }}>
-        <h2>スポーツ大会2025</h2>
+        <h2>スポ大info</h2>
       </div>
 
       <div style={{ display: "flex", justifyContent: "center", marginTop: 24 }}>
