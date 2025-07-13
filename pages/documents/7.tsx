@@ -1,35 +1,34 @@
+import { Card } from "@mui/material"
 import Head from "next/head"
-import { useState, useEffect } from "react"
+import { Worker, Viewer } from '@react-pdf-viewer/core'
+import '@react-pdf-viewer/core/lib/styles/index.css'
 
-const resize = () => {
-  const height = window.innerHeight
-  const width = window.innerWidth
-  return { height: height, width: width }
+const width = {
+  xs: 0.9, sm: 350, md: 450, lg: 450, xl: 450,
 }
 
 const Documents = () => {
-  const [innerSize, setInnerSize] = useState({ height: 0, width: 0 })
-  const handleResize = () => {
-    setInnerSize(resize())
-  }
-  useEffect(() => {
-    handleResize()
-    window.addEventListener("resize", handleResize)
-    window.addEventListener("orientationchange", handleResize)
-  }, [])
-
   return (
-    <div style={{ height: "100%" }}>
+    <div>
       <Head>
         <title>要項</title>
       </Head>
 
-      <div style={{ display: "flex", justifyContent: "center", height: "100%", flexDirection: "column" }}>
+      <div style={{ display: "flex", justifyContent: "center" }}>
         <h2>要項</h2>
+      </div>
 
-        <div style={{ height: "100%" }}>
-          <iframe src="https://drive.google.com/file/d/112bkuRukZd6haFROvDp-If67C1QtppoZ/preview" width="100%" style={{ height: `${innerSize.height - 160}px` }} allow="autoplay"></iframe>
-        </div>
+      <div style={{ display: "flex", justifyContent: "center", marginTop: 24 }}>
+
+
+
+          <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
+
+            <Viewer 
+              fileUrl="/main.pdf"
+              defaultScale={1.5}
+            />
+          </Worker>
 
       </div>
     </div>
