@@ -22,36 +22,8 @@ const Documents = () => {
           sx={{ width: width }}
           style={{ backgroundColor: "#eae9eb", borderRadius: 9, padding: 24 }}
         >
-          <h3>ルール</h3>
-          <div style={{ marginBottom: 10 }}>
-            <Link href="documents/1">全体</Link>
-          </div>
-          <div style={{ marginBottom: 10 }}>
-            <Link href="documents/2">バレーボール</Link>
-          </div>
-          <div style={{ marginBottom: 10 }}>
-            <Link href="documents/3">バドミントン</Link>
-          </div>
-          <div style={{ marginBottom: 10 }}>
-            <Link href="documents/4">ドッジボール</Link>
-          </div>
-          <div style={{ marginBottom: 10 }}>
-            <Link href="documents/5">サッカー</Link>
-          </div>
-          <div style={{ marginBottom: 10 }}>
-            <Link href="documents/6">マリオカート 8DX</Link>
-          </div>
-        </Card>
-      </div>
-
-      <div style={{ display: "flex", justifyContent: "center", marginTop: 24 }}>
-        <Card
-          sx={{ width: width }}
-          style={{ backgroundColor: "#eae9eb", borderRadius: 9, padding: 24 }}
-        >
-
+          <h3><Link href="documents/1">ルール</Link></h3>
           <h3><Link href="documents/7">要項</Link></h3>
-
         </Card>
       </div>
     </div>

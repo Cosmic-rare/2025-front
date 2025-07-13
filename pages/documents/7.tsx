@@ -1,5 +1,10 @@
+import { Card } from "@mui/material"
 import Head from "next/head"
 import { useState, useEffect } from "react"
+
+const width = {
+  xs: 0.9, sm: 350, md: 450, lg: 450, xl: 450,
+}
 
 const resize = () => {
   const height = window.innerHeight
@@ -24,13 +29,17 @@ const Documents = () => {
         <title>要項</title>
       </Head>
 
-      <div style={{ display: "flex", justifyContent: "center", height: "100%", flexDirection: "column" }}>
-        <h2>要項</h2>
+      <div style={{ display: "flex", justifyContent: "center", marginTop: 24 }}>
+        <Card
+          sx={{ width: width }}
+          style={{ backgroundColor: "#eae9eb", borderRadius: 9, padding: 24, lineHeight: 2.1 }}
+        >
+          
 
-        <div style={{ height: "100%" }}>
-          <iframe src="https://drive.google.com/file/d/112bkuRukZd6haFROvDp-If67C1QtppoZ/preview" width="100%" style={{ height: `${innerSize.height - 160}px` }} allow="autoplay"></iframe>
-        </div>
 
+
+          
+        </Card>
       </div>
     </div>
   )
