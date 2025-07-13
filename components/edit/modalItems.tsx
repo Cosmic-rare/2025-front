@@ -168,15 +168,19 @@ const PlaceInput = ({ setGame, game }: any) => {
             onChange={handleChange}
             value={game.place}
             options={[
-              { value: 'a1', label: '1体A(ステージ側・西)' },
-              { value: 'b1', label: '1体B(入口側・東)' },
-              { value: 'a2', label: '2体A(1体・外側・南西)' },
-              { value: 'b2', label: '2体B(プール・外側・北西)' },
+              { value: 'a1', label: '1体(ステージ側・西)' },
+              { value: 'b1', label: '1体(入口側・東)' },
+              { value: 'a2', label: '2体A(1体・敷地外側・南西)' },
+              { value: 'b2', label: '2体B(プール・敷地外側・北西)' },
               { value: 'c2', label: '2体C(1体・校舎側・南東)' },
               { value: 'd2', label: '2体D(プール・校舎側・北東)' },
-              { value: 'mo', label: 'ミニ校庭' },
-              { value: 'ma', label: '校庭A(北)' },
-              { value: 'mb', label: '校庭B(南)' },
+              { value: 'dd2', label: '2体D(外側・西)' },
+              { value: 'de2', label: '2体E(校舎側・東)' },
+              { value: 'ma', label: 'ミニ校庭' },
+              { value: 'mb', label: '校庭B(北)' },
+              { value: 'mc', label: '校庭C(南)' },
+              { value: 'sc', label: '校庭' },
+              { value: 'es', label: '視聴覚室' },
             ]}
           />
         </div>
