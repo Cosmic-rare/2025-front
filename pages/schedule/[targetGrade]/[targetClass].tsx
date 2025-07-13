@@ -98,10 +98,10 @@ const Schedule = () => {
                 <TableRow>
                   <TableCell align="center">済</TableCell>
                   <TableCell align="center">種目</TableCell>
-                  <TableCell align="center">確定(試)</TableCell>
                   <TableCell align="center">相手</TableCell>
-                  <TableCell align="center">場所</TableCell>
                   <TableCell align="center">開始時刻</TableCell>
+                  <TableCell align="center">確定(試)</TableCell>
+                  <TableCell align="center">場所</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -118,12 +118,7 @@ const Schedule = () => {
                           <TableCell component="th" scope="row">
                             {row.data.title}
                           </TableCell>
-                          <TableCell align="center">
-                            <Checkbox disabled={false} checked={row.certaintyMatch} />
-                          </TableCell>
                           <TableCell align="left">{row.opponent ? row.opponent.join(", ") : null}</TableCell>
-                          {/* @ts-ignore */}
-                          <TableCell align="center">{row.data[`p_${row.game}`].place ? places[row.data[`p_${row.game}`].place] : "-"}</TableCell>
                           <TableCell align="right">
                             {
                               row.data[`p_${row.game}`].scheduledAt ?
@@ -131,6 +126,11 @@ const Schedule = () => {
                                 : "-"
                             }
                           </TableCell>
+                          <TableCell align="center">
+                            <Checkbox disabled={false} checked={row.certaintyMatch} />
+                          </TableCell>
+                          {/* @ts-ignore */}
+                          <TableCell align="center">{row.data[`p_${row.game}`].place ? places[row.data[`p_${row.game}`].place] : "-"}</TableCell>
                         </TableRow>
                         : null
                     }
