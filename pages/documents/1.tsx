@@ -1,5 +1,7 @@
 import { Card } from "@mui/material"
 import Head from "next/head"
+import { Worker, Viewer } from '@react-pdf-viewer/core'
+import '@react-pdf-viewer/core/lib/styles/index.css'
 
 const width = {
   xs: 0.9, sm: 350, md: 450, lg: 450, xl: 450,
@@ -17,16 +19,17 @@ const Documents = () => {
       </div>
 
       <div style={{ display: "flex", justifyContent: "center", marginTop: 24 }}>
-        <Card
-          sx={{ width: width }}
-          style={{ backgroundColor: "#eae9eb", borderRadius: 9, padding: 24, lineHeight: 2.1 }}
-        >
-          
 
 
 
-          
-        </Card>
+          <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
+
+            <Viewer 
+              fileUrl="/main.pdf"
+              defaultScale={1.5}
+            />
+          </Worker>
+
       </div>
     </div>
   )
