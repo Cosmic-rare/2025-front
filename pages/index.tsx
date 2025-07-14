@@ -116,12 +116,11 @@ export async function getStaticProps() {
     props: {
       data: res.data
     },
-    revalidate: 60
+    revalidate: 10
   };
 }
 
 const Index = ({ data }: any) => {
-  console.log(data)
 
 
   const grouped = React.useMemo(() => {
