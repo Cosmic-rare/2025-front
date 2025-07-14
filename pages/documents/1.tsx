@@ -25,7 +25,7 @@ const Documents = () => {
           <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
 
             <Viewer 
-              fileUrl="/main.pdf"
+              fileUrl="/rule.pdf"
               defaultScale={1.5}
             />
           </Worker>
