@@ -51,7 +51,7 @@ export async function getStaticProps() {
     props: {
       data1: groupedData1, data2: groupedData2, data3: groupedData3
     },
-    revalidate: 60
+    revalidate: 10
   };
 }
 
